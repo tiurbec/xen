@@ -10,7 +10,8 @@
 # DUSSHP	- portul de ssh va fi 2200+DUID
 # DUHOSTNAME	- hostname pentru DomU 
 # DUMAC		- adresa MAC generata din IDHOST
-# ROLES		- lista de servicii oferite. serviciile sunt separate cu virgula si fara spatii. servicii posibile: postgres,pgbouncer,nginx,php
+# ROLES		- lista de servicii oferite. serviciile sunt separate cu virgula si fara spatii. 
+#		  servicii posibile: postgres,pgbouncer,nginx,php
 #
 # DEBUG		- pentru testare
 #
@@ -20,11 +21,13 @@
 # De adaugat port fw pt ssh 22xx si 54320+x ps postgresx
 if [ $# != 7 ]
 then
-   echo "xen virtual machine creator"
-   echo " "
-   echo " Usage:"
-   echo "  createvm.sh <idhost> <hostip> <hostsshp> <domuhostname> <domuid> <roles> <lvsize>"
-   echo " "
+   echo << EOF
+xen virtual machine creator"
+
+ Usage:
+  createvm.sh <idhost> <hostip> <hostsshp> <domuhostname> <domuid> <roles> <lvsize>
+
+EOF
    exit 0
 fi
 #
