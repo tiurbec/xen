@@ -21,7 +21,7 @@
 # De adaugat port fw pt ssh 22xx si 54320+x ps postgresx
 if [ $# != 7 ]
 then
-   echo << EOF
+   cat << EOF
 xen virtual machine creator"
 
  Usage:
@@ -63,86 +63,99 @@ then
 #   set
    echo "Creating XINST ..."
 fi
-echo "name = \"$DUHOSTNAME\"" > ./$XINST
-echo "kernel = \"/usr/local/xen/vmlinuz\"" >> ./$XINST
-echo "ramdisk = \"/usr/local/xen/initrd.img\"" >> ./$XINST
-echo "extra = \"root=/dev/xvda1 ip=$DUIP netmask=255.255.255.0 gateway=10.1.1.1 dns=8.8.8.8 text ks=http://10.1.1.10/$XKS\"" >> ./$XINST
-echo "memory = 1024" >> ./$XINST
-echo "maxmem = 2048" >> ./$XINST
-echo "vcpus = 2" >> ./$XINST
-echo "vif = [ 'mac=$DUMAC, bridge=xenbr0' ]" >> ./$XINST
-echo "disk = [ '/dev/vg0/$DUHOSTNAME,raw,xvda,rw' ]" >> ./$XINST
-echo "on_reboot = 'destroy'" >> ./$XINST
-echo "on_crash = 'destroy'" >> ./$XINST
+cat <<EOF > ./$XINST
+name = "$DUHOSTNAME"
+kernel = "/usr/local/xen/vmlinuz"
+ramdisk = "/usr/local/xen/initrd.img"
+extra = "root=/dev/xvda1 ip=$DUIP netmask=255.255.255.0 gateway=10.1.1.1 dns=8.8.8.8 text ks=http://10.1.1.10/$XKS"
+memory = 1024
+maxmem = 2048
+vcpus = 2
+vif = [ 'mac=$DUMAC, bridge=xenbr0' ]
+disk = [ '/dev/vg0/$DUHOSTNAME,raw,xvda,rw' ]
+on_reboot = 'destroy'
+on_crash = 'destroy'
+EOF
 
 if [ $DEBUG -eq 1 ]
 then
    echo "Creating XKS ..."
 fi
-echo "install" > ./$XKS
-echo "url --url http://mirror.centos.org/centos/6/os/x86_64/" >> ./$XKS
-echo "lang en_US.UTF-8" >> ./$XKS
-echo "network --device eth0 --bootproto static --ip=$DUIP --netmask=255.255.255.0 --gateway=10.1.1.1 --nameserver=8.8.8.8,8.8.4.4 --hostname=$DUHOSTNAME" >> ./$XKS
-echo "rootpw bogus" >> ./$XKS
-echo "firewall --enabled --port=22" >> ./$XKS
-echo "authconfig --enableshadow --enablemd5" >> ./$XKS
-echo "selinux --disabled" >> ./$XKS
-echo "timezone --utc Europe/Bucharest" >> ./$XKS
-echo "bootloader --location=mbr" >> ./$XKS
-echo "reboot" >> ./$XKS
-echo "zerombr" >> ./$XKS
-echo "clearpart --all --drives=xvda" >> ./$XKS
-echo "part /boot --fstype ext3 --size=200 --ondisk=xvda" >> ./$XKS
-echo "part swap --fstype swap --size=256 --grow --maxsize=1024 --ondisk=xvda" >> ./$XKS
-echo "part / --fstype ext4 --size=1024 --grow --ondisk=xvda" >> ./$XKS
-echo "%packages" >> ./$XKS
-echo "@core" >> ./$XKS
-echo "-*firmware" >> ./$XKS
-echo "-postfix" >> ./$XKS
-echo "sendmail" >> ./$XKS
-echo "-b43-openfwwf" >> ./$XKS
-echo "%end" >> ./$XKS
-echo "%post" >> ./$XKS
-echo "mkdir -p /root/.ssh" >> ./$XKS
-echo "echo \"ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDRbxZmL0wIzP6YhzTtL7Gq8XTtn5YlLtsYpVKUHTT2EskGTMVmdF4ja+/qt6rqILf/6w3/HQ2RyYUFv+6QKfk1rI44nLwJ/GVWXe5PD1uzD7LffUESraCrkwaVUCWWy6QMznnHx7BO8AS3il3BYeLq7f82oJLxumILUSks95UdC67wgv8ZUCsWV1gnv00HIJ3hB1fHrwqiTM4KxISwATII0kSQysXFtvdoXbvodneomzs/Si3RW3VduvjcPdBzltJcRlNp/MKlprzqtbOt5fAp/5lzeNwWZZIWiciG+YxC/bOvplJ+/Nf7SKj1vMCLOo9nIjtrNMqScAC8DF70RTG9 tiurbec@sis.easy-cloud.net\" >>/root/.ssh/authorized_keys" >> ./$XKS
-echo "echo \"ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDPHyE25FBeL5PiFyC9sJzvPMYpK8vnibP9rcNX4GZ1qeMsGHt6QNEub2leJhiz+jcjDidoLO/tDZfSy7m95Kft3hPEis9Hjv9hntKbuS9eyDP33vRSM8LNOFW7CATsiUBMY9o7LNvEXaFR4ec/imBg5zsc8fDyL5QwvEwrQaWa2g5h/tN3FWzsgURlUkxmLN5rLu4wcRyRsxk21SgygXAxDRJRe0usHvV0uhKy34NBmmoNd+u0Px8Vlex6Eqi+B/pokHGZg/aYoKe2pSz+Ep0UcC6XoE112jjrpbbrvLwOhH1VgcAOukg9KX1u5PM7VM4/tgCXKu9XJONdPNccEWHV system@expert-accounting.com\" >>/root/.ssh/authorized_keys" >> ./$XKS
-echo "echo \"ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgwCXyVETsLPU4gNVTyuDv2KzoEGNbDETSU1PK170sPskgQJs4q17Kdh82qiKSOZynSGBE+QRKjtL0+CBU42WYperHFSDGK7CEq60mw+gjZu39eUFmteoLQ3xkahKnyrUuQa77JsBDZqTsMw9sUy62OigkGew82RnkaBDQ73rJRuGJJfv karasz@divto\">>/root/.ssh/authorized_keys" >> ./$XKS
-echo "echo \"ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC5yMJUtJw/vWXu/wvi5W/mQaLPuxPxm5lQbxM5wggO/Ww8xWHfiw9kqB7YBxFrip1NKuLgpKT7Z7L08ak9FlWeYOMQP6UsTnqw5jewRQ8s3Kw/1YT+HjjWHw+QYWBXUgY5whwSrqRwtOHmjk1fbH6U1udDodnCLiwhKwGc6882wNQMzyGGfPKzs55Jb1lcN408zMHlAW9wb7QJhFKzw3iSsuuNjzYi5Gbp5ZYHYGmH8FJOPaJnllgJRkZdyyTh0ZX4JSZUimmKIVb9hC/IlN0qk0YqhSxwJ0MXFkpVxJUKr0a4KZQC2J7xpqGtD3P5SX2MkK0WfFbWiEPA/mWRQiZf monitor@sis.easy-cloud.net\" >>/root/.ssh/authorized_keys" >> ./$XKS
-echo "chmod 700 /root/.ssh" >> ./$XKS
-echo "chmod 600 /root/.ssh/authorized_keys" >> ./$XKS
+
+cat <<EOF > ./$XKS
+install
+url --url http://mirror.centos.org/centos/6/os/x86_64/
+lang en_US.UTF-8
+network --device eth0 --bootproto static --ip=$DUIP --netmask=255.255.255.0 --gateway=10.1.1.1 --nameserver=8.8.8.8,8.8.4.4 --hostname=$DUHOSTNAME
+rootpw bogus
+firewall --enabled --port=22
+authconfig --enableshadow --enablemd5
+selinux --disabled
+timezone --utc Europe/Bucharest
+bootloader --location=mbr
+reboot
+zerombr
+clearpart --all --drives=xvda
+part /boot --fstype ext3 --size=200 --ondisk=xvda
+part swap --fstype swap --size=256 --grow --maxsize=1024 --ondisk=xvda
+part / --fstype ext4 --size=1024 --grow --ondisk=xvda
+%packages
+@core
+-*firmware
+-postfix
+sendmail
+-b43-openfwwf
+%end
+%post
+mkdir -p /root/.ssh
+echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDRbxZmL0wIzP6YhzTtL7Gq8XTtn5YlLtsYpVKUHTT2EskGTMVmdF4ja+/qt6rqILf/6w3/HQ2RyYUFv+6QKfk1rI44nLwJ/GVWXe5PD1uzD7LffUESraCrkwaVUCWWy6QMznnHx7BO8AS3il3BYeLq7f82oJLxumILUSks95UdC67wgv8ZUCsWV1gnv00HIJ3hB1fHrwqiTM4KxISwATII0kSQysXFtvdoXbvodneomzs/Si3RW3VduvjcPdBzltJcRlNp/MKlprzqtbOt5fAp/5lzeNwWZZIWiciG+YxC/bOvplJ+/Nf7SKj1vMCLOo9nIjtrNMqScAC8DF70RTG9 tiurbec@sis.easy-cloud.net" >>/root/.ssh/authorized_keys
+echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDPHyE25FBeL5PiFyC9sJzvPMYpK8vnibP9rcNX4GZ1qeMsGHt6QNEub2leJhiz+jcjDidoLO/tDZfSy7m95Kft3hPEis9Hjv9hntKbuS9eyDP33vRSM8LNOFW7CATsiUBMY9o7LNvEXaFR4ec/imBg5zsc8fDyL5QwvEwrQaWa2g5h/tN3FWzsgURlUkxmLN5rLu4wcRyRsxk21SgygXAxDRJRe0usHvV0uhKy34NBmmoNd+u0Px8Vlex6Eqi+B/pokHGZg/aYoKe2pSz+Ep0UcC6XoE112jjrpbbrvLwOhH1VgcAOukg9KX1u5PM7VM4/tgCXKu9XJONdPNccEWHV system@expert-accounting.com" >>/root/.ssh/authorized_keys
+echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgwCXyVETsLPU4gNVTyuDv2KzoEGNbDETSU1PK170sPskgQJs4q17Kdh82qiKSOZynSGBE+QRKjtL0+CBU42WYperHFSDGK7CEq60mw+gjZu39eUFmteoLQ3xkahKnyrUuQa77JsBDZqTsMw9sUy62OigkGew82RnkaBDQ73rJRuGJJfv karasz@divto">>/root/.ssh/authorized_keys
+echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC5yMJUtJw/vWXu/wvi5W/mQaLPuxPxm5lQbxM5wggO/Ww8xWHfiw9kqB7YBxFrip1NKuLgpKT7Z7L08ak9FlWeYOMQP6UsTnqw5jewRQ8s3Kw/1YT+HjjWHw+QYWBXUgY5whwSrqRwtOHmjk1fbH6U1udDodnCLiwhKwGc6882wNQMzyGGfPKzs55Jb1lcN408zMHlAW9wb7QJhFKzw3iSsuuNjzYi5Gbp5ZYHYGmH8FJOPaJnllgJRkZdyyTh0ZX4JSZUimmKIVb9hC/IlN0qk0YqhSxwJ0MXFkpVxJUKr0a4KZQC2J7xpqGtD3P5SX2MkK0WfFbWiEPA/mWRQiZf monitor@sis.easy-cloud.net" >>/root/.ssh/authorized_keys
+chmod 700 /root/.ssh
+chmod 600 /root/.ssh/authorized_keys
+EOF
 
 if [ $HASPOSTGRES -eq 1 ]
 then
- echo "rpm -Uvh \"http://yum.postgresql.org/9.2/redhat/rhel-6-x86_64/pgdg-centos92-9.2-6.noarch.rpm\"" >> ./$XKS
- echo "yum -y groupinstall \"PostgreSQL Database Server 9.2 PGDG\"" >> ./$XKS
- echo "/etc/init.d/postgresql-9.2 initdb" >> ./$XKS
- echo "echo \"local   all             all                                     trust\" > /var/lib/pgsql/9.2/data/pg_hba.conf" >> ./$XKS
- echo "echo \"host    all             all             127.0.0.1/32            trust\" >>/var/lib/pgsql/9.2/data/pg_hba.conf" >> ./$XKS
- echo "sed -i 's/^\#port\ =\ 5432/port\ =\ 5434/g' /var/lib/pgsql/9.2/data/postgresql.conf" >> ./$XKS
- echo "/etc/init.d/postgresql-9.2 start" >> ./$XKS
- echo "chkconfig postgresql-9.2 on">> ./$XKS
+cat <<EOF >> ./$XKS
+rpm -Uvh "http://yum.postgresql.org/9.2/redhat/rhel-6-x86_64/pgdg-centos92-9.2-6.noarch.rpm"
+yum -y groupinstall "PostgreSQL Database Server 9.2 PGDG"
+/etc/init.d/postgresql-9.2 initdb
+echo "local   all             all                                     trust" > /var/lib/pgsql/9.2/data/pg_hba.conf
+echo "host    all             all             127.0.0.1/32            trust" >>/var/lib/pgsql/9.2/data/pg_hba.conf
+sed -i 's/^\#port\ =\ 5432/port\ =\ 5434/g' /var/lib/pgsql/9.2/data/postgresql.conf
+/etc/init.d/postgresql-9.2 start
+chkconfig postgresql-9.2 on
+EOF
 fi
 if [ $HASPGBOUNCER -eq 1 ]
 then
- echo "yum -y install pgbouncer" >> ./$XKS
- echo "/etc/init.d/pgbouncer start" >> ./$XKS
- echo "chkconfig pgbouncer on" >> ./$XKS
+cat <<EOF >> ./$XKS
+yum -y install pgbouncer
+/etc/init.d/pgbouncer start
+chkconfig pgbouncer on
+EOF
 fi
 if [ $HASNGINX -eq 1 ]
 then
- echo "rpm -Uvh http://nginx.org/packages/centos/6/noarch/RPMS/nginx-release-centos-6-0.el6.ngx.noarch.rpm" >> ./$XKS
- echo "yum -y install nginx" >> ./$XKS
- echo "### momentan" >> ./$XKS
- echo "rm -f /etc/nginx/conf.d/*" >> ./$XKS
+cat <<EOF >> ./$XKS
+rpm -Uvh http://nginx.org/packages/centos/6/noarch/RPMS/nginx-release-centos-6-0.el6.ngx.noarch.rpm
+yum -y install nginx
+### momentan
+rm -f /etc/nginx/conf.d/*
+EOF
 fi
 if [ $HASPHP -eq 1 ]
 then
- echo "rpm -Uvh http://dl.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm" >> ./$XKS
- echo "rpm -Uvh http://rpms.famillecollet.com/enterprise/remi-release-6.rpm" >> ./$XKS
- echo "yum -y --enablerepo=remi install php-fpm php-bcmath php-gd php-mbstring php-mcrypt php-pgsql php-php-gettext php-soap" >> ./$XKS
- echo "sed -i -e 's/apache/nginx/g; s/listen.allowed_clients\ =\ 127.0.0.1/listen.allowed_clients\ =\ 127.0.0.1,10.1.1.7/g; s/^;pm.max_requests\ =\ 500/pm.max_requests\ =\ 500/g' /etc/php-fpm.d/www.conf" >> ./$XKS
- echo "/etc/init.d/php-fpm start" >> ./$XKS
- echo "chkconfig php-fpm on" >> ./$XKS
+cat <<EOF >> ./$XKS
+rpm -Uvh http://dl.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm
+rpm -Uvh http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
+yum -y --enablerepo=remi install php-fpm php-bcmath php-gd php-mbstring php-mcrypt php-pgsql php-php-gettext php-soap
+sed -i -e 's/apache/nginx/g; s/listen.allowed_clients\ =\ 127.0.0.1/listen.allowed_clients\ =\ 127.0.0.1,10.1.1.7/g; s/^;pm.max_requests\ =\ 500/pm.max_requests\ =\ 500/g' /etc/php-fpm.d/www.conf
+/etc/init.d/php-fpm start
+chkconfig php-fpm on
+EOF
 fi
 echo "chkconfig ntpd on" >> ./$XKS
 echo "%end" >> ./$XKS
@@ -152,14 +165,16 @@ then
 #   set
    echo "Creating XRUN ..."
 fi
-echo "name = \"$DUHOSTNAME\"" > ./$XRUN
-echo "kernel = \"/usr/lib/xen/boot/pv-grub-x86_64.gz\"" >> ./$XRUN
-echo "extra = \"(hd0,0)/grub/menu.lst console=hvc0\"" >> ./$XRUN
-echo "memory = 1024" >> ./$XRUN
-echo "maxmem = 2048" >> ./$XRUN
-echo "vcpus = 2" >> ./$XRUN
-echo "vif = [ 'mac=$DUMAC, bridge=xenbr0, vifname=vif.$DUHOSTNAME' ]" >> ./$XRUN
-echo "disk = [ '/dev/vg0/$DUHOSTNAME,raw,xvda,rw' ]" >> ./$XRUN
+cat <<EOF > ./$XRUN
+name = "$DUHOSTNAME"
+kernel = "/usr/lib/xen/boot/pv-grub-x86_64.gz"
+extra = "(hd0,0)/grub/menu.lst console=hvc0"
+memory = 1024
+maxmem = 2048
+vcpus = 2
+vif = [ 'mac=$DUMAC, bridge=xenbr0, vifname=vif.$DUHOSTNAME' ]
+disk = [ '/dev/vg0/$DUHOSTNAME,raw,xvda,rw' ]
+EOF
 
 if [ $DEBUG -eq 1 ]
 then
