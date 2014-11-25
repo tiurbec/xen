@@ -52,12 +52,11 @@ DUMAC=`./int2mac $IDHOST | sed s/\ /0/g`
 XINST="xl$IDHOST.install"
 XRUN="xl$IDHOST.run"
 XKS="xl$IDHOST.ks"
-HASNGINX=`echo $ROLES | grep nginx | wc -l`
-HASPGBOUNCER=`echo $ROLES | grep pgbouncer | wc -l`
-HASPOSTGRES=`echo $ROLES | grep postgres | wc -l`
-HASPHP=`echo $ROLES | grep php | wc -l`
+[[ "$ROLES" == *"nginx"* ]] && HASNGINX=1 || HASNGINX=0
+[[ "$ROLES" == *"pgbouncer"* ]] && HASPGBOUNCER==1 || HASPGBOUNCER==0
+[[ "$ROLES" == *"postgres"* ]] && HASPOSTGRES=1 || HASPOSTGRES=0
+[[ "$ROLES" == *"php"* ]] && HASPHP=1 || HASPHP=0
 
-echo $ROLES
 if [ $DEBUG -eq 1 ]
 then
 #   set
