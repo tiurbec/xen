@@ -17,5 +17,5 @@ int main(int argc, char *argv[])
    b=i%256;
    i/=256;
    a=i%256;
-   printf("00:16:3e:%2x:%2x:%2x",a,b,c);
+   printf("00:16:3e:%02x:%02x:%02x",a,b,c);
 }
