@@ -1,0 +1,17 @@
+We want only xl as tool, not xm
+--- /etc/rc.d/init.d/xendomains.orig	2014-09-02 08:22:57.000000000 +0200
++++ /etc/rc.d/init.d/xendomains	2014-11-26 12:50:06.004000000 +0100
+@@ -27,12 +27,7 @@
+ #                    boots / shuts down.
+ ### END INIT INFO
+ 
+-CMD=xm
+-$CMD list &> /dev/null
+-if test $? -ne 0
+-then
+-	CMD=xl
+-fi
++CMD=xl
+ 
+ $CMD list &> /dev/null
+ if test $? -ne 0
