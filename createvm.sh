@@ -48,16 +48,21 @@ LVSIZE=$7
 DUIP=10.1.1.$DUID
 DUSSHP=$((2200+$DUID))
 DUPGPORT=$((54320+$DUID))
-DUMAC=`./int2mac $IDHOST | sed s/\ /0/g`
+DUMAC=`./int2mac $IDHOST`
 XINST="xl$IDHOST.install"
 XRUN="xl$IDHOST.run"
 XKS="xl$IDHOST.ks"
-HASNGINX=`echo $ROLES | grep nginx | wc -l`
-HASPGBOUNCER=`echo $ROLES | grep pgbouncer | wc -l`
-HASPOSTGRES=`echo $ROLES | grep postgres | wc -l`
-HASPHP=`echo $ROLES | grep php | wc -l`
+HASNGINX=0
+HASPOSTGRES=0
+HASPHP=0
+HASPGBOUNCER=0
+APPS="nginx pgbouncer postgres php"
 
-echo $ROLES
+for app in $APPS; do
+        if [[ "$ROLES" == *"$app"* ]]; then
+                eval HAS${app^^}=1
+        fi
+
 if [ $DEBUG -eq 1 ]
 then
 #   set
