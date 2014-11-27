@@ -23,6 +23,7 @@
 # Exit codes are as follows:
 #	 0 - no error 
 #	 1 - invalid number of params. Help message displayed
+#	 2 - called script returned with error
 #	10 - TESTING mode. Config files were created but nothing applied
 #	20 - xlXXX.run file already on Dom0. Installation halted
 #	30 - The desired logical volume already exists. Installation halted
@@ -32,7 +33,7 @@ then
 xen virtual machine creator"
 
  Usage:
-  createvm.sh <idhost> <hostip> <hostsshp> <domuhostname> <domuid> <roles> <lvsize>
+  $0 <idhost> <hostip> <hostsshp> <domuhostname> <domuid> <roles> <lvsize>
 
 EOF
    exit 1
@@ -79,13 +80,33 @@ then
 fi
 
 sh ./xs_crxinst.sh $DUHOSTNAME $DUIP $DUMAC $XINST $XKS
+if [ $? -ne 0 ]
+then
+   echo "Error while calling ./xs_crxinst.sh"
+   exit 2
+else
+   if [ $DEBUG -eq 1 ]
+   then
+	echo "done"
+   fi
+fi
 
 if [ $DEBUG -eq 1 ]
 then
-   echo "Creating XKS ..."
+   echo -n "Creating XKS ... "
 fi
 
 sh ./xs_crxks.sh $DUHOSTNAME $DUIP $XKS $ROLES
+if [ $? -ne 0 ]
+then
+   echo "Error while calling ./xs_crxks.sh"
+   exit 2
+else
+   if [ $DEBUG -eq 1 ]
+   then
+        echo "done"
+   fi
+fi
 
 if [ $DEBUG -eq 1 ]
 then
@@ -93,6 +114,16 @@ then
 fi
 
 sh ./xs_crxrun.sh $DUHOSTNAME $DUMAC $XRUN
+if [ $? -ne 0 ]
+then
+   echo "Error while calling ./xs_crxrun.sh"
+   exit 2
+else
+   if [ $DEBUG -eq 1 ]
+   then
+        echo "done"
+   fi
+fi
 
 if [ $TESTING -eq 1 ]
 then
@@ -106,6 +137,16 @@ then
 fi
 
 sh ./xs_cp.sh $XINST $XRUN $XKS $HOSTIP $HOSTSSHP
+if [ $? -ne 0 ]
+then
+   echo "Error while calling ./xs_cp.sh"
+   exit 2
+else
+   if [ $DEBUG -eq 1 ]
+   then
+        echo "done"
+   fi
+fi
 
 if [ $DEBUG -eq 1 ]
 then
@@ -125,4 +166,9 @@ then
 fi
 
 sh ./xs_post.sh $HOSTIP $HOSTSSHP $XINST $XRUN $ROLES $DUID $DUPGPORT $DUSSHP
+if [ $? -ne 0 ]
+then
+   echo "Error while calling ./xs_post.sh"
+   exit 2
+fi
 
