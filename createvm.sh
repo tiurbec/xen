@@ -26,6 +26,7 @@
 #	 2 - called script returned with error
 #	10 - TESTING mode. Config files were created but nothing applied
 #	20 - xlXXX.run file already on Dom0. Installation halted
+#	22 - ssh connection error. Why 22? Beacuse of ssh. Anyways, installation halted
 #	30 - The desired logical volume already exists. Installation halted
 if [ $# != 7 ]
 then
