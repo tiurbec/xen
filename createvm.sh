@@ -21,7 +21,8 @@
 # IDHOST, HOSTIP, HOSTSSHP, DUHOSTNAME, DUID, ROLES, LVSIZE
 #
 # Exit codes are as follows:
-#	 0 - no error or help message
+#	 0 - no error 
+#	 1 - invalid number of params. Help message displayed
 #	10 - TESTING mode. Config files were created but nothing applied
 #	20 - xlXXX.run file already on Dom0. Installation halted
 #	30 - The desired logical volume already exists. Installation halted
@@ -34,7 +35,7 @@ xen virtual machine creator"
   createvm.sh <idhost> <hostip> <hostsshp> <domuhostname> <domuid> <roles> <lvsize>
 
 EOF
-   exit 0
+   exit 1
 fi
 #
 DEBUG=1
