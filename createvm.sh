@@ -62,6 +62,7 @@ for app in $APPS; do
         if [[ "$ROLES" == *"$app"* ]]; then
                 eval HAS${app^^}=1
         fi
+done
 
 if [ $DEBUG -eq 1 ]
 then
