@@ -20,7 +20,11 @@
 # In linia de comanda se vor specifica:
 # IDHOST, HOSTIP, HOSTSSHP, DUHOSTNAME, DUID, ROLES, LVSIZE
 #
-# De adaugat port fw pt ssh 22xx si 54320+x ps postgresx
+# Exit codes are as follows:
+#	 0 - no error or help message
+#	10 - TESTING mode. Config files were created but nothing applied
+#	20 - xlXXX.run file already on Dom0. Installation halted
+#	30 - The desired logical volume already exists. Installation halted
 if [ $# != 7 ]
 then
    cat << EOF
@@ -188,7 +192,7 @@ EOF
 if [ $TESTING -eq 1 ]
 then
    echo "Config files created. Exiting without applying them."
-   exit 3
+   exit 10
 fi
 
 if [ $DEBUG -eq 1 ]
@@ -209,7 +213,7 @@ XRUNEXISTS=`ssh -p $HOSTSSHP root@$HOSTIP "ls /etc/xen/$XRUN | wc -l"`
 if [ $XRUNEXISTS -ne 0 ]
 then
    echo "$XRUN file is already on Dom0 at $HOSTIP. Are you sure you want to continue installing a new DomU there?"
-   exit 1
+   exit 20
 fi
 scp -P $HOSTSSHP ./$XRUN root@$HOSTIP:/etc/xen/$XRUN 
 #dd if=./$XRUN | ssh -p $HOSTSSHP root@$HOSTIP dd of=/etc/xen/$XRUN
@@ -225,7 +229,7 @@ LVEXISTS=`ssh -p $HOSTSSHP root@$HOSTIP "lvdisplay | grep /dev/vg0/$DUHOSTNAME |
 if [ $LVEXISTS -ne 0 ]
 then
    echo "Logical volume /dev/vg0/$DUHOSTNAME already exists on Dom0 at $HOSTIP. Installation HALTED!"
-   exit 2
+   exit 30
 fi
 ssh -p $HOSTSSHP root@$HOSTIP "lvcreate -n $DUHOSTNAME -L $LVSIZE /dev/vg0" 
 if [ $DEBUG -eq 1 ]
