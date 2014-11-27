@@ -204,7 +204,7 @@ if [ $DEBUG -eq 1 ]
 then
    echo -n "$XKS "
 fi
-dd if=./$XINST | ssh -p $HOSTSSHP root@$HOSTIP "dd of=/etc/xen/$XINST"
+scp -P $HOSTSSHP ./$XINST root@$HOSTIP:/etc/xen/$XINST
 if [ $DEBUG -eq 1 ]
 then
    echo -n "$XINST "
