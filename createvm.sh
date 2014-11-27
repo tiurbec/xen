@@ -153,11 +153,16 @@ if [ $DEBUG -eq 1 ]
 then
    echo "Checking for lv on Dom0 ..."
 fi
-LVEXISTS=`ssh -p $HOSTSSHP root@$HOSTIP "lvdisplay | grep /dev/vg0/$DUHOSTNAME | wc -l"`
-if [ $LVEXISTS -ne 0 ]
+ssh -p $HOSTSSHP root@$HOSTIP "lvdisplay /dev/vg0/$DUHOSTNAME"
+LVEXISTS=$?
+if [ $LVEXISTS -eq 5 ]
 then
    echo "Logical volume /dev/vg0/$DUHOSTNAME already exists on Dom0 at $HOSTIP. Installation HALTED!"
    exit 30
+   elif [ $LVEXISTS -eq 255 ]
+   then
+      echo "Error while connecting to $HOSTIP"
+      exit 22
 fi
 ssh -p $HOSTSSHP root@$HOSTIP "lvcreate -n $DUHOSTNAME -L $LVSIZE /dev/vg0" 
 

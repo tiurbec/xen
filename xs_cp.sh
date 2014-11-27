@@ -24,13 +24,14 @@ HOSTSSHP=$5
 
 cp -f ./$XKS /var/www/html/
 scp -P $HOSTSSHP ./$XINST root@$HOSTIP:/etc/xen/$XINST
-XRUNEXISTS=`ssh -p $HOSTSSHP root@$HOSTIP "ls /etc/xen/$XRUN | wc -l"`
+#XRUNEXISTS=`ssh -p $HOSTSSHP root@$HOSTIP "ls /etc/xen/$XRUN | wc -l"`
 ssh -p $HOSTSSHP root@$HOSTIP "stat /etc/xen/$XRUN"
-if [ $? -eq 1 ]
+XRUNEXISTS=$?
+if [ $XRUNEXISTS -eq 1 ]
 then
    echo "$XRUN file is already on Dom0 at $HOSTIP. Are you sure you want to continue installing a new DomU there?"
    exit 20
-   elif [ $? -eq 255 ]
+   elif [ $XRUNEXISTS -eq 255 ]
    then
       echo "Error while connecting to $HOSTIP"
       exit 22
