@@ -13,7 +13,9 @@
 # ROLES		- lista de servicii oferite. serviciile sunt separate cu virgula si fara spatii. 
 #		  servicii posibile: postgres,pgbouncer,nginx,php
 #
-# DEBUG		- pentru testare
+# DEBUG		- for debugging messages
+# TESTING	- will only create config files but wil not apply anything
+# 
 #
 # In linia de comanda se vor specifica:
 # IDHOST, HOSTIP, HOSTSSHP, DUHOSTNAME, DUID, ROLES, LVSIZE
@@ -32,6 +34,7 @@ EOF
 fi
 #
 DEBUG=1
+TESTING=1
 #
 # numarul de parametri e corect
 if [ $DEBUG -eq 1 ]
@@ -181,6 +184,12 @@ vcpus = 2
 vif = [ 'mac=$DUMAC, bridge=xenbr0, vifname=vif.$DUHOSTNAME' ]
 disk = [ '/dev/vg0/$DUHOSTNAME,raw,xvda,rw' ]
 EOF
+
+if [ $TESTING -eq 1 ]
+then
+   echo "Config files created. Exiting without applying them."
+   exit 3
+fi
 
 if [ $DEBUG -eq 1 ]
 then
