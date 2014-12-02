@@ -41,7 +41,7 @@ EOF
 fi
 #
 DEBUG=1
-TESTING=0
+TESTING=1
 #
 # numarul de parametri e corect
 if [ $DEBUG -eq 1 ]
@@ -119,6 +119,18 @@ sh ./xs_crxrun.sh $DUHOSTNAME $DUMAC $XRUN
 if [ $? -ne 0 ]
 then
    echo "Error while calling ./xs_crxrun.sh"
+   exit 2
+else
+   if [ $DEBUG -eq 1 ]
+   then
+        echo "done"
+   fi
+fi
+
+sh ./xs_crzbag.sh $DUHOSTNAME $DUIP $ROLES
+if [ $? -ne 0 ]
+then
+   echo "Error while calling ./xs_crzbag.sh"
    exit 2
 else
    if [ $DEBUG -eq 1 ]
