@@ -52,7 +52,7 @@ scp -P $HOSTSSHP ./$XINST root@$HOSTIP:/etc/xen/$XINST
 #XRUNEXISTS=`ssh -p $HOSTSSHP root@$HOSTIP "ls /etc/xen/$XRUN | wc -l"`
 ssh -p $HOSTSSHP root@$HOSTIP "stat /etc/xen/$XRUN"
 XRUNEXISTS=$?
-if [ $XRUNEXISTS -eq 1 ]
+if [ $XRUNEXISTS -eq 0 ]
 then
    echo "$XRUN file is already on Dom0 at $HOSTIP. Are you sure you want to continue installing a new DomU there?"
    exit 20

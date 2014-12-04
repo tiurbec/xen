@@ -168,7 +168,7 @@ then
 fi
 ssh -p $HOSTSSHP root@$HOSTIP "lvdisplay /dev/vg0/$DUHOSTNAME"
 LVEXISTS=$?
-if [ $LVEXISTS -eq 5 ]
+if [ $LVEXISTS -eq 0 ]
 then
    echo "Logical volume /dev/vg0/$DUHOSTNAME already exists on Dom0 at $HOSTIP. Installation HALTED!"
    exit 30
