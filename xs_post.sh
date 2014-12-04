@@ -10,7 +10,7 @@ then
 xen virtual machine post install tasks"
 
  Usage:
-  $0 <dom0IP> <dom0sshPort> <domuXInst> <domuXRun> <roles> <domuID> <domuPGPort> <domUsshPort>
+  $0 <dom0IP> <dom0sshPort> <domuXInst> <domuXRun> <roles> <domuID> <domuPGPort> <domUsshPort> <domUhostname>
 
 EOF
    exit 1
@@ -24,6 +24,7 @@ ROLES=$5
 DUID=$6
 DUPGPORT=$7
 DUSSHP=$8
+DUHOSTNAME=$9
 
 HASPOSTGRES=0
 
@@ -45,3 +46,11 @@ fi
 ssh -p $HOSTSSHP root@$HOSTIP "iptables-save > /etc/sysconfig/iptables"
 ssh -p $HOSTSSHP root@$HOSTIP "ln -s /etc/xen/$XRUN /etc/xen/auto/$XRUN"
 
+#Copy zabbix-agent files
+scp -P $DUSSHP ./zabbix_agentd.conf.$DUHOSTNAME root@$HOSTIP:/etc/zabbix/zabbix_agentd.conf
+if [ $HASPOSTGRES -eq 1 ]
+then
+   scp -P $DUSSHP ./files/zabbix-agent/postgres/etc/* root@$HOSTIP:/etc/zabbix/zabbix_agentd.d/
+   scp -P $DUSSHP ./files/zabbix-agent/postgres/usr/* root@$HOSTIP:/usr/local/bin/
+fi
+ssh -p $DUSSHP root@$HOSTIP "service zabbix-agent restart"

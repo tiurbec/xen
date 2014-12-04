@@ -10,7 +10,7 @@ then
 xen virtual machine - tool that copies files"
 
  Usage:
-  $0 <domuXInst> <domuXRun> <domuXKS> <dom0IP> <dom0sshPort>
+  $0 <domuXInst> <domuXRun> <domuXKS> <dom0IP> <dom0sshPort> 
 
 EOF
    exit 1
@@ -21,6 +21,7 @@ XRUN=$2
 XKS=$3
 HOSTIP=$4
 HOSTSSHP=$5
+
 
 #Checking /usr/local/xen folder on Dom0
 ssh -p $HOSTSSHP root@$HOSTIP "stat /usr/local/xen"
