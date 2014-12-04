@@ -22,6 +22,30 @@ XKS=$3
 HOSTIP=$4
 HOSTSSHP=$5
 
+#Checking /usr/local/xen folder on Dom0
+ssh -p $HOSTSSHP root@$HOSTIP "stat /usr/local/xen"
+XRUNEXISTS=$?
+if [ $XRUNEXISTS -ne 0 ]
+then
+   ssh -p $HOSTSSHP root@$HOSTIP "mkdir -p /usr/local/xen"
+fi
+
+#Checking /usr/local/xen/vmlinuz on Dom0
+ssh -p $HOSTSSHP root@$HOSTIP "stat /usr/local/xen/vmlinuz"
+XRUNEXISTS=$?
+if [ $XRUNEXISTS -ne 0 ]
+then
+   scp -P $HOSTSSHP ./files/vmlinuz root@$HOSTIP:/usr/local/xen/vmlinuz
+fi
+
+#Checking /usr/local/xen/initrd.img on Dom0
+ssh -p $HOSTSSHP root@$HOSTIP "stat /usr/local/xen/initrd.img"
+XRUNEXISTS=$?
+if [ $XRUNEXISTS -ne 0 ]
+then
+   scp -P $HOSTSSHP ./files/initrd.img root@$HOSTIP:/usr/local/xen/initrd.img
+fi
+
 cp -f ./$XKS /var/www/html/
 scp -P $HOSTSSHP ./$XINST root@$HOSTIP:/etc/xen/$XINST
 #XRUNEXISTS=`ssh -p $HOSTSSHP root@$HOSTIP "ls /etc/xen/$XRUN | wc -l"`
