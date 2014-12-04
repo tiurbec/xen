@@ -4,7 +4,7 @@
 #
 #
 
-if [ $# != 8 ]
+if [ $# != 9 ]
 then
    cat << EOF
 xen virtual machine post install tasks"

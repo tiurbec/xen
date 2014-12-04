@@ -184,7 +184,7 @@ then
    echo "Starting installation for $DUHOSTNAME on $HOSTIP"
 fi
 
-sh ./xs_post.sh $HOSTIP $HOSTSSHP $XINST $XRUN $ROLES $DUID $DUPGPORT $DUSSHP
+sh ./xs_post.sh $HOSTIP $HOSTSSHP $XINST $XRUN $ROLES $DUID $DUPGPORT $DUSSHP $DUHOSTNAME
 if [ $? -ne 0 ]
 then
    echo "Error while calling ./xs_post.sh"
