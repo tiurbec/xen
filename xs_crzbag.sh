@@ -31,6 +31,7 @@ done
 cat <<EOF > ./$XZB
 PidFile=/var/run/zabbix/zabbix_agentd.pid
 LogFile=/var/log/zabbix/zabbix_agentd.log
+Include=/etc/zabbix/zabbix_agentd.d/*
 LogFileSize=0
 DebugLevel=2
 SourceIP=$DUIP
