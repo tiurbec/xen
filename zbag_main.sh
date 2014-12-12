@@ -70,7 +70,7 @@ RETSTR=$(ssh -p $PORT root@$IP 'cat /etc/SDE-VERSION  | grep "OpenSDE master" | 
 if [ $RETSTR -eq 1 ];
 then
    OS="opensde"
-   SOURCEIP=$(ssh -p $PORT root@IP "ifconfig dummy0|grep inet|grep -v inet6|awk '{print \$2}'|sed 's/addr://'")
+   SOURCEIP=$(ssh -p $PORT root@$IP "ifconfig dummy0|grep inet|grep -v inet6|awk '{print \$2}'|sed 's/addr://'")
 fi
 
 if [ "$OS" == "centos_66" ];
@@ -87,17 +87,21 @@ SourceIP=$SOURCEIP
 ServerActive=144.76.106.136
 HostnameItem=system.hostname
 HostMetadata=$ROLES
-#ListenIP=$SOURCEIP
 RefreshActiveChecks=120
 StartAgents=0
 EOF
 #| ssh -p $PORT root@$IP 'cat > /etc/zabbix/zabbix_agentd.conf'
+  if [ $HASPOSTGRES -eq 1 ]
+  then
+     scp -P $PORT ./files/zabbix-agent/postgres/etc/* root@$IP:/etc/zabbix/zabbix_agentd.d/
+     scp -P $PORT ./files/zabbix-agent/postgres/usr/* root@$IP:/usr/local/bin/
+  fi
   ssh -p $PORT root@$IP 'service  zabbix-agent restart'
 fi
 
 if [ "$OS" == "opensde" ];
 then
-   ssh -p $PORT root@$IP 'useradd zabbix'
+   ssh -p $PORT root@$IP '/usr/sbin/useradd zabbix'
    ssh -p $PORT root@$IP 'chsh -s /bin/false zabbix'
    ssh -p $PORT root@$IP 'cd ~zabbix;lftpget http://www.zabbix.com/downloads/2.4.1/zabbix_agents_2.4.1.linux2_6.amd64.tar.gz;tar xvfz zabbix_agents_2.4.1.linux2_6.amd64.tar.gz'
 cat <<EOF | ssh -p $PORT root@$IP 'cat > /home/zabbix/conf/zabbix_agentd.conf'
@@ -109,7 +113,6 @@ SourceIP=$SOURCEIP
 ServerActive=144.76.106.136
 HostnameItem=system.hostname
 HostMetadata=$ROLES
-#ListenIP=$SOURCEIP
 RefreshActiveChecks=120
 StartAgents=0
 EOF
@@ -122,7 +125,7 @@ EOF
 #   ssh -p $PORT root@$IP 'mkdir -p /var/run/zabbix;chown zabbix.root /var/run/zabbix'
 #   ssh -p $PORT root@$IP 'ln -s /etc/zabbix_agent/ /var/service/'
 #   ssh -p $PORT root@$IP 'sv up /var/service/zabbix_agent'
-cat <<'EOF' | ssh -p $PORT root@$IP 'cat > /etc/init.d/zabbix_agentd
+cat <<'EOF' | ssh -p $PORT root@$IP 'cat > /etc/init.d/zabbix_agentd'
 title() {
 	local x w="$( stty size 2>/dev/null </dev/tty | cut -d" " -f2  )"
 	[ -z "$w" ] && w="$( stty size </dev/console | cut -d" " -f2  )"
@@ -169,7 +172,14 @@ esac
 exit 0
 EOF
    ssh -p $PORT root@$IP 'chmod +x /etc/init.d/zabbix_agentd'
-   ssh -p $PORT root@$IP '/etc/init.d/zabbix_agentd restart'
+   if [ $HASPOSTGRES -eq 1 ]
+   then
+      scp -P $PORT ./files/zabbix-agent/postgres/etc/* root@$IP:/home/zabbix/conf/zabbix_agentd/
+      scp -P $PORT ./files/zabbix-agent/postgres/usr/* root@$IP:/usr/local/bin/
+   fi
+
+   ssh -p $PORT root@$IP '/etc/init.d/zabbix_agentd stop'
+   ssh -p $PORT root@$IP '/etc/init.d/zabbix_agentd start'
 fi
 exit 0
 #ip=ifconfig|xargs|awk '{print $7}'|sed -e 's/[a-z]*:/''/'
