@@ -3,7 +3,7 @@
 #			Part of server management @ ExpertSoftware
 #			We are assuming we already made ssh keys exchange
 #
-set -x
+#set -x
 if [ $# != 3 ]
 then
    cat << EOF
@@ -25,6 +25,7 @@ SSHOK=0
 SAMEIP=0
 OS="unknown"
 
+HASPOSTGRES=0
 APPS="nginx pgbouncer postgres php"
 
 for app in $APPS; do
@@ -58,7 +59,7 @@ then
       fi
 fi
 
-echo "Using $IP:$PORT"
+echo "Working on $IP:$PORT"
 
 RETSTR=$(ssh -p $PORT root@$IP 'cat /etc/redhat-release  | grep "CentOS release 6.6" | wc -l')
 if [ $RETSTR -eq 1 ];
@@ -72,6 +73,10 @@ then
    OS="opensde"
    SOURCEIP=$(ssh -p $PORT root@$IP "ifconfig dummy0|grep inet|grep -v inet6|awk '{print \$2}'|sed 's/addr://'")
 fi
+
+################################################################################
+# CentOS 6.6 stuff                                                             #
+################################################################################
 
 if [ "$OS" == "centos_66" ];
 then
@@ -98,6 +103,10 @@ EOF
   fi
   ssh -p $PORT root@$IP 'service  zabbix-agent restart'
 fi
+
+################################################################################
+# OpenSDE stuff                                                                #
+################################################################################
 
 if [ "$OS" == "opensde" ];
 then
