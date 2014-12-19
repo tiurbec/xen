@@ -37,7 +37,7 @@ install
 url --url http://mirror.centos.org/centos/6/os/x86_64/
 lang en_US.UTF-8
 network --device eth0 --bootproto static --ip=$DUIP --netmask=255.255.255.0 --gateway=10.1.1.1 --nameserver=8.8.8.8,8.8.4.4 --hostname=$DUHOSTNAME
-rootpw bogus
+rootpw --iscrypted "\$1\$zi/J1\$XxeaJrprUlKo28fJwxVpc/"
 firewall --enabled --port=22
 authconfig --enableshadow --enablemd5
 selinux --disabled
