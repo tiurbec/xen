@@ -46,7 +46,7 @@ bootloader --location=mbr
 reboot
 zerombr
 clearpart --all --drives=xvda
-part /boot --fstype ext3 --size=200 --ondisk=xvda
+part /boot --fstype ext4 --size=200 --ondisk=xvda
 part swap --fstype swap --size=256 --grow --maxsize=1024 --ondisk=xvda
 part / --fstype ext4 --size=1024 --grow --ondisk=xvda
 %packages
