@@ -28,20 +28,20 @@
 #	20 - xlXXX.run file already on Dom0. Installation halted
 #	22 - ssh connection error. Why 22? Beacuse of ssh. Anyways, installation halted
 #	30 - The desired logical volume already exists. Installation halted
-if [ $# != 7 ]
+if [ $# != 8 ]
 then
    cat << EOF
 xen virtual machine creator"
 
  Usage:
-  $0 <idhost> <hostip> <hostsshp> <domuhostname> <domuid> <roles> <lvsize>
+  $0 <idhost> <hostip> <hostsshp> <domuhostname> <domuid> <roles> <lvsize> <testing>
 
 EOF
    exit 1
 fi
 #
 DEBUG=1
-TESTING=1
+#TESTING=1
 #
 # numarul de parametri e corect
 if [ $DEBUG -eq 1 ]
@@ -56,6 +56,7 @@ DUHOSTNAME="${_DUHOSTNAME//[^[:alnum:]_\-\.]/_}"
 DUID=$5
 ROLES=$6
 LVSIZE=$7
+TESTING=$8
 DUIP=10.1.1.$DUID
 DUSSHP=$((2200+$DUID))
 DUPGPORT=$((54320+$DUID))
