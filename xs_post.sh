@@ -46,6 +46,7 @@ fi
 ssh -p $HOSTSSHP root@$HOSTIP "iptables-save > /etc/sysconfig/iptables"
 ssh -p $HOSTSSHP root@$HOSTIP "ln -s /etc/xen/$XRUN /etc/xen/auto/$XRUN"
 
+ssh -p $DUSSHP root@$HOSTIP "iptables -F;iptables-save > /etc/sysconfig/iptables;chkconfig iptables off"
 #Copy zabbix-agent files
 scp -P $DUSSHP ./zabbix_agentd.conf.$DUHOSTNAME root@$HOSTIP:/etc/zabbix/zabbix_agentd.conf
 if [ $HASPOSTGRES -eq 1 ]
