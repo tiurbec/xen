@@ -83,6 +83,8 @@ echo "local   all             all                                     trust" > /
 echo "host    all             all             127.0.0.1/32            trust" >>/var/lib/pgsql/9.2/data/pg_hba.conf
 echo "host    all             all             10.1.1.0/24             trust" >>/var/lib/pgsql/9.2/data/pg_hba.conf
 sed -i 's/^\#port\ =\ 5432/port\ =\ 5434/g' /var/lib/pgsql/9.2/data/postgresql.conf
+echo "#Override port" >/etc/sysconfig/pgsql/postgresql-9.2
+echo "PGPORT=5434" >>/etc/sysconfig/pgsql/postgresql-9.2
 /etc/init.d/postgresql-9.2 start
 chkconfig postgresql-9.2 on
 EOF
