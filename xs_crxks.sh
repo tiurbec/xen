@@ -90,6 +90,7 @@ listen_addresses = '*'
 port = 5434	
 max_connections = 100
 shared_buffers = 48MB
+fsync=on
 checkpoint_segments = 50
 log_destination = 'stderr'
 logging_collector = on	
@@ -132,6 +133,11 @@ if [[ $HASPOSTGRES -eq 0 && $HASPGBOUNCER -eq 1 ]];
 then
 adduser postgres
 chsh -s /sbin/nologin postgres
+fi
+if [[$HASNGINX -eq 1 && $HASPOSTGRES -eq 0 ]];
+then
+rpm -Uvh "http://yum.postgresql.org/9.2/redhat/rhel-6-x86_64/pgdg-centos92-9.2-6.noarch.rpm"
+yum -y install postgresql92
 fi
 if [ $HASNGINX -eq 1 ]
 then
