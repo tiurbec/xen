@@ -85,6 +85,36 @@ echo "host    all             all             10.1.1.0/24             trust" >>/
 sed -i 's/^\#port\ =\ 5432/port\ =\ 5434/g' /var/lib/pgsql/9.2/data/postgresql.conf
 echo "#Override port" >/etc/sysconfig/pgsql/postgresql-9.2
 echo "PGPORT=5434" >>/etc/sysconfig/pgsql/postgresql-9.2
+cat <<'PGCNF' > /var/lib/pgsql/9.2/data/postgresql.conf
+listen_addresses = '*'
+port = 5434	
+max_connections = 100
+shared_buffers = 48MB
+checkpoint_segments = 50
+log_destination = 'stderr'
+logging_collector = on	
+log_directory = 'pg_log'
+log_filename = 'postgresql-%a.log'
+log_truncate_on_rotation = on	
+log_rotation_age = 1d	
+log_rotation_size = 0
+log_timezone = 'Europe/Bucharest'
+datestyle = 'iso, mdy'
+timezone = 'Europe/Bucharest'
+lc_messages = 'en_US.UTF-8'	
+lc_monetary = 'en_US.UTF-8'
+lc_numeric = 'en_US.UTF-8'
+lc_time = 'en_US.UTF-8'	
+default_text_search_config = 'pg_catalog.english'
+
+wal_level = 'hot_standby'
+archive_mode = on
+archive_command = 'cd .'
+
+max_wal_senders = 10
+wal_keep_segments = 500
+hot_standby = on
+PGCNF
 /etc/init.d/postgresql-9.2 start
 chkconfig postgresql-9.2 on
 EOF
