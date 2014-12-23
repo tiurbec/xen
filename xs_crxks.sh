@@ -98,6 +98,11 @@ yum -y install pgbouncer
 chkconfig pgbouncer on
 EOF
 fi
+if [[ $HASPOSTGRES -eq 0 && $HASPGBOUNCER -eq 1 ]];
+then
+adduser postgres
+chsh -s /sbin/nologin postgres
+fi
 if [ $HASNGINX -eq 1 ]
 then
 cat <<EOF >> ./$XKS
