@@ -134,7 +134,7 @@ then
 adduser postgres
 chsh -s /sbin/nologin postgres
 fi
-if [[$HASNGINX -eq 1 && $HASPOSTGRES -eq 0 ]];
+if [[ $HASNGINX -eq 1 && $HASPOSTGRES -eq 0 ]];
 then
 rpm -Uvh "http://yum.postgresql.org/9.2/redhat/rhel-6-x86_64/pgdg-centos92-9.2-6.noarch.rpm"
 yum -y install postgresql92
