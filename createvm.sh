@@ -64,7 +64,8 @@ DUMAC=`./int2mac $IDHOST`
 XINST="xl$IDHOST-$DUHOSTNAME.install"
 XRUN="xl$IDHOST-$DUHOSTNAME.run"
 XKS="xl$IDHOST-$DUHOSTNAME.ks"
-VGNAME=$(sh -p $HOSTSSHP root@$HOSTIP "lvdisplay | grep VG\ Name | tail -1 | sed s/VG\ Name// | sed s/\ //g")
+VGNAME=$(ssh -p $HOSTSSHP root@$HOSTIP "lvdisplay | grep VG\ Name | tail -1 | sed s/VG\ Name// | sed s/\ //g")
+HOSTDEFIF=$(ssh -p $HOSTSSHP root@$HOSTIP "ip route | grep default | cut -d \  -f5")
 
 HASNGINX=0
 HASPOSTGRES=0
@@ -187,7 +188,7 @@ then
    echo "Starting installation for $DUHOSTNAME on $HOSTIP"
 fi
 
-sh ./xs_post.sh $HOSTIP $HOSTSSHP $XINST $XRUN $ROLES $DUID $DUPGPORT $DUSSHP $DUHOSTNAME
+sh ./xs_post.sh $HOSTIP $HOSTSSHP $XINST $XRUN $ROLES $DUID $DUPGPORT $DUSSHP $DUHOSTNAME $HOSTDEFIF
 if [ $? -ne 0 ]
 then
    echo "Error while calling ./xs_post.sh"

@@ -4,13 +4,13 @@
 #
 #
 
-if [ $# != 9 ]
+if [ $# != 10 ]
 then
    cat << EOF
 xen virtual machine post install tasks"
 
  Usage:
-  $0 <dom0IP> <dom0sshPort> <domuXInst> <domuXRun> <roles> <domuID> <domuPGPort> <domUsshPort> <domUhostname>
+  $0 <dom0IP> <dom0sshPort> <domuXInst> <domuXRun> <roles> <domuID> <domuPGPort> <domUsshPort> <domUhostname> <dom0DefIf>
 
 EOF
    exit 1
@@ -25,6 +25,7 @@ DUID=$6
 DUPGPORT=$7
 DUSSHP=$8
 DUHOSTNAME=$9
+HOSTDEFIF=${10}
 
 HASPOSTGRES=0
 
@@ -38,10 +39,10 @@ done
 
 ssh -p $HOSTSSHP root@$HOSTIP "xl create -c /etc/xen/$XINST"
 ssh -p $HOSTSSHP root@$HOSTIP "xl create /etc/xen/$XRUN"
-ssh -p $HOSTSSHP root@$HOSTIP "iptables -t nat -A PREROUTING -i eth0 -p tcp -m tcp --dport $DUSSHP -j DNAT --to-destination 10.1.1.$DUID:22"
+ssh -p $HOSTSSHP root@$HOSTIP "iptables -t nat -A PREROUTING -i $HOSTDEFIF -p tcp -m tcp --dport $DUSSHP -j DNAT --to-destination 10.1.1.$DUID:22"
 if [ $HASPOSTGRES -eq 1 ]
 then
-   ssh -p $HOSTSSHP root@$HOSTIP "iptables -t nat -A PREROUTING -i eth0 -p tcp -m tcp --dport $DUPGPORT -j DNAT --to-destination 10.1.1.$DUID:5434"
+   ssh -p $HOSTSSHP root@$HOSTIP "iptables -t nat -A PREROUTING -i $HOSTDEFIF -p tcp -m tcp --dport $DUPGPORT -j DNAT --to-destination 10.1.1.$DUID:5434"
 fi
 ssh -p $HOSTSSHP root@$HOSTIP "iptables-save > /etc/sysconfig/iptables"
 ssh -p $HOSTSSHP root@$HOSTIP "ln -s /etc/xen/$XRUN /etc/xen/auto/$XRUN"
