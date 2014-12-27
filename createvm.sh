@@ -66,7 +66,13 @@ XRUN="xl$IDHOST-$DUHOSTNAME.run"
 XKS="xl$IDHOST-$DUHOSTNAME.ks"
 VGNAME=$(ssh -p $HOSTSSHP root@$HOSTIP "lvdisplay | grep VG\ Name | tail -1 | sed s/VG\ Name// | sed s/\ //g")
 HOSTDEFIF=$(ssh -p $HOSTSSHP root@$HOSTIP "ip route | grep default | cut -d \  -f5")
+IPAREA=$(ssh -p $HOSTSSHP root@$HOSTIP "whois `ip route | grep default | cut -d \  -f3` | grep source\: | tail -1 | sed s/source\:// | sed s/\ //g | cut -d\# -f1")
 
+if [[ "$IPAREA" == "APNIC" ]];then
+   CENTOSMIRROR="http://mirror.centos.org/centos/6/os/x86_64/"
+else
+   CENTOSMIRROR="http://centos.ipserverone.com/centos/6/os/x86_64/"
+fi
 HASNGINX=0
 HASPOSTGRES=0
 HASPHP=0
@@ -102,7 +108,7 @@ then
    echo -n "Creating XKS ... "
 fi
 
-sh ./xs_crxks.sh $DUHOSTNAME $DUIP $XKS $ROLES
+sh ./xs_crxks.sh $DUHOSTNAME $DUIP $XKS $ROLES $CENTOSMIRROR
 if [ $? -ne 0 ]
 then
    echo "Error while calling ./xs_crxks.sh"

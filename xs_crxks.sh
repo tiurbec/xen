@@ -4,13 +4,13 @@
 #
 #
 
-if [ $# != 4 ]
+if [ $# != 5 ]
 then
    cat << EOF
 xen virtual machine kickstart file creator"
 
  Usage:
-  $0 <domuHostname> <domuIP> <domuKickStart> <roles>
+  $0 <domuHostname> <domuIP> <domuKickStart> <roles> <CentOSmirrorURL>
 
 EOF
    exit 1
@@ -20,6 +20,7 @@ DUHOSTNAME=$1
 DUIP=$2
 XKS=$3
 ROLES=$4
+CENTOSMIRROR=$5
 HASNGINX=0
 HASPOSTGRES=0
 HASPHP=0
@@ -34,7 +35,7 @@ done
 
 cat <<EOF > ./$XKS
 install
-url --url http://mirror.centos.org/centos/6/os/x86_64/
+url --url $CENTOSMIRROR
 lang en_US.UTF-8
 network --device eth0 --bootproto static --ip=$DUIP --netmask=255.255.255.0 --gateway=10.1.1.254 --nameserver=8.8.8.8,8.8.4.4 --hostname=$DUHOSTNAME
 rootpw --iscrypted "\$1\$zi/J1\$XxeaJrprUlKo28fJwxVpc/"
