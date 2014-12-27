@@ -64,6 +64,8 @@ DUMAC=`./int2mac $IDHOST`
 XINST="xl$IDHOST-$DUHOSTNAME.install"
 XRUN="xl$IDHOST-$DUHOSTNAME.run"
 XKS="xl$IDHOST-$DUHOSTNAME.ks"
+VGNAME=$(sh -p $HOSTSSHP root@$HOSTIP "lvdisplay | grep VG\ Name | tail -1 | sed s/VG\ Name// | sed s/\ //g")
+
 HASNGINX=0
 HASPOSTGRES=0
 HASPHP=0
@@ -82,7 +84,7 @@ then
    echo -n "Creating XINST ... "
 fi
 
-sh ./xs_crxinst.sh $DUHOSTNAME $DUIP $DUMAC $XINST $XKS
+sh ./xs_crxinst.sh $DUHOSTNAME $DUIP $DUMAC $XINST $XKS $VGNAME
 if [ $? -ne 0 ]
 then
    echo "Error while calling ./xs_crxinst.sh"
@@ -116,7 +118,7 @@ then
    echo "Creating XRUN ..."
 fi
 
-sh ./xs_crxrun.sh $DUHOSTNAME $DUMAC $XRUN
+sh ./xs_crxrun.sh $DUHOSTNAME $DUMAC $XRUN $VGNAME
 if [ $? -ne 0 ]
 then
    echo "Error while calling ./xs_crxrun.sh"
@@ -167,18 +169,18 @@ if [ $DEBUG -eq 1 ]
 then
    echo "Checking for lv on Dom0 ..."
 fi
-ssh -p $HOSTSSHP root@$HOSTIP "lvdisplay /dev/vg0/$DUHOSTNAME"
+ssh -p $HOSTSSHP root@$HOSTIP "lvdisplay /dev/$VGNAME/$DUHOSTNAME"
 LVEXISTS=$?
 if [ $LVEXISTS -eq 0 ]
 then
-   echo "Logical volume /dev/vg0/$DUHOSTNAME already exists on Dom0 at $HOSTIP. Installation HALTED!"
+   echo "Logical volume /dev/$VGNAME/$DUHOSTNAME already exists on Dom0 at $HOSTIP. Installation HALTED!"
    exit 30
    elif [ $LVEXISTS -eq 255 ]
    then
       echo "Error while connecting to $HOSTIP"
       exit 22
 fi
-ssh -p $HOSTSSHP root@$HOSTIP "lvcreate -n $DUHOSTNAME -L $LVSIZE /dev/vg0" 
+ssh -p $HOSTSSHP root@$HOSTIP "lvcreate -n $DUHOSTNAME -L $LVSIZE /dev/$VGNAME" 
 
 if [ $DEBUG -eq 1 ]
 then

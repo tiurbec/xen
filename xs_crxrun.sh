@@ -4,13 +4,13 @@
 #
 #
 
-if [ $# != 3 ]
+if [ $# != 4 ]
 then
    cat << EOF
 xen virtual machine run file creator"
 
  Usage:
-  $0 <domuHostname> <domuMAC> <domuXRunFilename>
+  $0 <domuHostname> <domuMAC> <domuXRunFilename> <vgName>
 
 EOF
    exit 1
@@ -19,6 +19,7 @@ fi
 DUHOSTNAME=$1
 DUMAC=$2
 XRUN=$3
+VGNAME=$4
 
 cat <<EOF > ./$XRUN
 name = "$DUHOSTNAME"
@@ -28,7 +29,7 @@ memory = 1024
 maxmem = 2048
 vcpus = 2
 vif = [ 'mac=$DUMAC, bridge=xenbr0, vifname=vif.$DUHOSTNAME' ]
-disk = [ '/dev/vg0/$DUHOSTNAME,raw,xvda,rw' ]
+disk = [ '/dev/$VGNAME/$DUHOSTNAME,raw,xvda,rw' ]
 EOF
 
 

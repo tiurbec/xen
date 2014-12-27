@@ -4,13 +4,13 @@
 #
 #
 
-if [ $# != 5 ]
+if [ $# != 6 ]
 then
    cat << EOF
 xen virtual machine install file creator"
 
  Usage:
-  $0 <domuHostname> <domuIP> <domuMAC> <domuXInstFilename> <domuKickStart>
+  $0 <domuHostname> <domuIP> <domuMAC> <domuXInstFilename> <domuKickStart> <vgName>
 
 EOF
    exit 1
@@ -21,6 +21,7 @@ DUIP=$2
 DUMAC=$3
 XINST=$4
 XKS=$5
+VGNAME=$6
 
 cat <<EOF > ./$XINST
 name = "$DUHOSTNAME"
@@ -31,7 +32,7 @@ memory = 1024
 maxmem = 2048
 vcpus = 2
 vif = [ 'mac=$DUMAC, bridge=xenbr0' ]
-disk = [ '/dev/vg0/$DUHOSTNAME,raw,xvda,rw' ]
+disk = [ '/dev/$VGNAME/$DUHOSTNAME,raw,xvda,rw' ]
 on_reboot = 'destroy'
 on_crash = 'destroy'
 EOF
