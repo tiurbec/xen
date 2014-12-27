@@ -69,9 +69,9 @@ HOSTDEFIF=$(ssh -p $HOSTSSHP root@$HOSTIP "ip route | grep default | cut -d \  -
 IPAREA=$(ssh -p $HOSTSSHP root@$HOSTIP "whois `ip route | grep default | cut -d \  -f3` | grep source\: | tail -1 | sed s/source\:// | sed s/\ //g | cut -d\# -f1")
 
 if [[ "$IPAREA" == "APNIC" ]];then
-   CENTOSMIRROR="http://mirror.centos.org/centos/6/os/x86_64/"
+CENTOSMIRROR="http://centos.ipserverone.com/centos/6/os/x86_64/"
 else
-   CENTOSMIRROR="http://centos.ipserverone.com/centos/6/os/x86_64/"
+CENTOSMIRROR="http://mirror.centos.org/centos/6/os/x86_64/"
 fi
 HASNGINX=0
 HASPOSTGRES=0
