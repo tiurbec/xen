@@ -29,9 +29,9 @@ memory = 1024
 maxmem = 2048
 vcpus = 2
 vif = [ 'mac=$DUMAC, bridge=xenbr0, vifname=vif.$DUHOSTNAME' ]
-disk = [ '/dev/$VGNAME/$DUHOSTNAME-root,raw,xvda,rw' ]
-disk = [ '/dev/$VGNAME/$DUHOSTNAME-boot,raw,xvdb,rw' ]
-disk = [ '/dev/$VGNAME/$DUHOSTNAME-swap,raw,xvdc,rw' ]
+disk = [ '/dev/$VGNAME/$DUHOSTNAME-root,raw,xvda3,rw', 
+ '/dev/$VGNAME/$DUHOSTNAME-boot,raw,xvda1,rw', 
+ '/dev/$VGNAME/$DUHOSTNAME-swap,raw,xvda2,rw' ]
 EOF
 
 
