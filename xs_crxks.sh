@@ -46,10 +46,11 @@ timezone --utc Europe/Bucharest
 bootloader --location=mbr
 reboot
 zerombr
-clearpart --all --drives=xvda
-part /boot --fstype ext4 --size=200 --ondisk=xvda
-part swap --fstype swap --size=256 --grow --maxsize=1024 --ondisk=xvda
+clearpart --all --drives=xvda,xvdb,xvdc
+part /boot --fstype ext4 --size=200 --ondisk=xvdb
+part swap --fstype swap --size=256 --grow --maxsize=1024 --ondisk=xvdc
 part / --fstype ext4 --size=1024 --grow --ondisk=xvda
+
 %packages
 @core
 -*firmware

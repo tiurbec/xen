@@ -27,12 +27,14 @@ cat <<EOF > ./$XINST
 name = "$DUHOSTNAME"
 kernel = "/usr/local/xen/vmlinuz"
 ramdisk = "/usr/local/xen/initrd.img"
-extra = "root=/dev/xvda1 ip=$DUIP netmask=255.255.255.0 gateway=10.1.1.254 dns=8.8.8.8 text ks=http://144.76.106.136:800/$XKS"
+extra = "root=/dev/xvda ip=$DUIP netmask=255.255.255.0 gateway=10.1.1.254 dns=8.8.8.8 text ks=http://144.76.106.136:800/$XKS"
 memory = 1024
 maxmem = 2048
 vcpus = 2
 vif = [ 'mac=$DUMAC, bridge=xenbr0' ]
-disk = [ '/dev/$VGNAME/$DUHOSTNAME,raw,xvda,rw' ]
+disk = [ '/dev/$VGNAME/$DUHOSTNAME-root,raw,xvda,rw' ]
+disk = [ '/dev/$VGNAME/$DUHOSTNAME-boot,raw,xvdb,rw' ]
+disk = [ '/dev/$VGNAME/$DUHOSTNAME-swap,raw,xvdc,rw' ]
 on_reboot = 'destroy'
 on_crash = 'destroy'
 EOF
