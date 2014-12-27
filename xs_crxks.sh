@@ -43,9 +43,9 @@ firewall --enabled --port=22
 authconfig --enableshadow --enablemd5
 selinux --disabled
 timezone --utc Europe/Bucharest
-bootloader --location=none
+bootloader --location=partition
 reboot
-#zerombr
+zerombr
 #clearpart --all --drives=xvda,xvdb,xvdc
 #part /boot --fstype ext4 --size=200 --ondisk=xvdb
 #part swap --fstype swap --size=256 --grow --maxsize=1024 --ondisk=xvdc
