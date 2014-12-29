@@ -74,6 +74,18 @@ echo "	initrd /initramfs-2.6.32-504.el6.x86_64.img" >>/boot/grub/menu.lst
 
 yum -y install centos-release-xen
 yum -y install kernel
+
+VMLINUZ=$(ls /boot/vmlinuz-* | sort | tail -1 | sed s/\\/boot//)
+INITRAMFS=$(ls /boot/initramfs-* | sort | tail -1 | sed s/\\/boot//)
+KVERSION=$(echo "$INITRAMFS" | sed s/\\/initramfs-// | sed s/.img//)
+echo "title CentOS 6 ($KVERSION)" >>/boot/grub/menu.lst
+echo "  root (hd0)" >>/boot/grub/menu.lst
+echo "  kernel $VMLINUZ ro root=/dev/xvda3 rd_NO_LUKS LANG=en_US.UTF-8 rd_NO_MD console=hvc0  KEYTABLE=us SYSFONT=latarcyrheb-sun16 crashkernel=auto rd_NO_LVM rd_NO_DM rhgb quiet" >>/boot/grub/menu.lst
+echo "  initrd $KVERSION" >>/boot/grub/menu.lst
+sed -i 's/default=0/default=1/' /boot/grub/menu.lst
+
+
+
 mkdir -p /root/.ssh
 echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDRbxZmL0wIzP6YhzTtL7Gq8XTtn5YlLtsYpVKUHTT2EskGTMVmdF4ja+/qt6rqILf/6w3/HQ2RyYUFv+6QKfk1rI44nLwJ/GVWXe5PD1uzD7LffUESraCrkwaVUCWWy6QMznnHx7BO8AS3il3BYeLq7f82oJLxumILUSks95UdC67wgv8ZUCsWV1gnv00HIJ3hB1fHrwqiTM4KxISwATII0kSQysXFtvdoXbvodneomzs/Si3RW3VduvjcPdBzltJcRlNp/MKlprzqtbOt5fAp/5lzeNwWZZIWiciG+YxC/bOvplJ+/Nf7SKj1vMCLOo9nIjtrNMqScAC8DF70RTG9 tiurbec@sis.easy-cloud.net" >>/root/.ssh/authorized_keys
 echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDPHyE25FBeL5PiFyC9sJzvPMYpK8vnibP9rcNX4GZ1qeMsGHt6QNEub2leJhiz+jcjDidoLO/tDZfSy7m95Kft3hPEis9Hjv9hntKbuS9eyDP33vRSM8LNOFW7CATsiUBMY9o7LNvEXaFR4ec/imBg5zsc8fDyL5QwvEwrQaWa2g5h/tN3FWzsgURlUkxmLN5rLu4wcRyRsxk21SgygXAxDRJRe0usHvV0uhKy34NBmmoNd+u0Px8Vlex6Eqi+B/pokHGZg/aYoKe2pSz+Ep0UcC6XoE112jjrpbbrvLwOhH1VgcAOukg9KX1u5PM7VM4/tgCXKu9XJONdPNccEWHV system@expert-accounting.com" >>/root/.ssh/authorized_keys
