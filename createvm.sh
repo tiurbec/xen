@@ -66,7 +66,7 @@ XRUN="xl$IDHOST-$DUHOSTNAME.run"
 XKS="xl$IDHOST-$DUHOSTNAME.ks"
 VGNAME=$(ssh -p $HOSTSSHP root@$HOSTIP "lvdisplay | grep VG\ Name | tail -1 | sed s/VG\ Name// | sed s/\ //g")
 HOSTDEFIF=$(ssh -p $HOSTSSHP root@$HOSTIP "ip route | grep default | cut -d \  -f5")
-IPAREA=$(ssh -p $HOSTSSHP root@$HOSTIP "whois `ip route | grep default | cut -d \  -f3` | grep source\: | tail -1 | sed s/source\:// | sed s/\ //g | cut -d\# -f1")
+IPAREA=$(ssh -p $HOSTSSHP root@$HOSTIP "whois \`ip route | grep default | cut -d \  -f3\` | grep source\: | tail -1 | sed s/source\:// | sed s/\ //g | cut -d\# -f1")
 
 if [[ "$IPAREA" == "APNIC" ]];then
 CENTOSMIRROR="http://centos.ipserverone.com/centos/6/os/x86_64/"
