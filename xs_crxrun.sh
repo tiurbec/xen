@@ -24,7 +24,7 @@ VGNAME=$4
 cat <<EOF > ./$XRUN
 name = "$DUHOSTNAME"
 kernel = "/usr/lib/xen/boot/pv-grub-x86_64.gz"
-extra = "(hd0,0)/grub/menu.lst console=hvc0"
+extra = "(hd0)/grub/menu.lst console=hvc0"
 memory = 1024
 maxmem = 2048
 vcpus = 2

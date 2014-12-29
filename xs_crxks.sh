@@ -43,7 +43,7 @@ firewall --enabled --port=22
 authconfig --enableshadow --enablemd5
 selinux --disabled
 timezone --utc Europe/Bucharest
-bootloader --location=partition
+bootloader --location=none
 reboot
 zerombr
 #clearpart --all --drives=xvda,xvdb,xvdc
@@ -63,6 +63,15 @@ sendmail
 -b43-openfwwf
 %end
 %post
+echo "default=0" >/boot/grub/menu.lst
+echo "timeout=5" >>/boot/grub/menu.lst
+echo "splashimage=(hd0)/grub/splash.xpm.gz" >>/boot/grub/menu.lst
+echo "hiddenmenu" >>/boot/grub/menu.lst
+echo "title CentOS 6 (2.6.32-504.el6.x86_64)" >>/boot/grub/menu.lst
+echo "	root (hd0)" >>/boot/grub/menu.lst
+echo "	kernel /vmlinuz-2.6.32-504.el6.x86_64 ro root=/dev/xvda3 rd_NO_LUKS LANG=en_US.UTF-8 rd_NO_MD console=hvc0  KEYTABLE=us SYSFONT=latarcyrheb-sun16 crashkernel=auto rd_NO_LVM rd_NO_DM rhgb quiet" >>/boot/grub/menu.lst
+echo "	initrd /initramfs-2.6.32-504.el6.x86_64.img" >>/boot/grub/menu.lst
+
 yum -y install centos-release-xen
 yum -y install kernel
 mkdir -p /root/.ssh
@@ -72,6 +81,7 @@ echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgwCXyVETsLPU4gNVTyuDv2KzoEGNbDETSU1PK1
 echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC5yMJUtJw/vWXu/wvi5W/mQaLPuxPxm5lQbxM5wggO/Ww8xWHfiw9kqB7YBxFrip1NKuLgpKT7Z7L08ak9FlWeYOMQP6UsTnqw5jewRQ8s3Kw/1YT+HjjWHw+QYWBXUgY5whwSrqRwtOHmjk1fbH6U1udDodnCLiwhKwGc6882wNQMzyGGfPKzs55Jb1lcN408zMHlAW9wb7QJhFKzw3iSsuuNjzYi5Gbp5ZYHYGmH8FJOPaJnllgJRkZdyyTh0ZX4JSZUimmKIVb9hC/IlN0qk0YqhSxwJ0MXFkpVxJUKr0a4KZQC2J7xpqGtD3P5SX2MkK0WfFbWiEPA/mWRQiZf monitor@sis.easy-cloud.net" >>/root/.ssh/authorized_keys
 chmod 700 /root/.ssh
 chmod 600 /root/.ssh/authorized_keys
+
 #Adding zabbix
 rpm -Uvh "http://repo.zabbix.com/zabbix/2.4/rhel/6/x86_64/zabbix-release-2.4-1.el6.noarch.rpm"
 yum -y install zabbix-agent
@@ -159,7 +169,7 @@ then
 cat <<EOF >> ./$XKS
 rpm -Uvh http://dl.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm
 rpm -Uvh http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
-yum -y --enablerepo=remi install php-fpm php-bcmath php-gd php-mbstring php-mcrypt php-pgsql php-php-gettext php-soap
+yum -y --enablerepo=remi install php-fpm php-bcmath php-gd php-mbstring php-mcrypt php-pgsql php-php-gettext php-soap php-xml
 sed -i -e 's/apache/nginx/g; s/listen.allowed_clients\ =\ 127.0.0.1/listen.allowed_clients\ =\ 127.0.0.1,10.1.1.7/g; s/^;pm.max_requests\ =\ 500/pm.max_requests\ =\ 500/g' /etc/php-fpm.d/www.conf
 /etc/init.d/php-fpm start
 chkconfig php-fpm on
