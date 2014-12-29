@@ -75,13 +75,13 @@ echo "	initrd /initramfs-2.6.32-504.el6.x86_64.img" >>/boot/grub/menu.lst
 yum -y install centos-release-xen
 yum -y install kernel
 
-VMLINUZ=$(ls /boot/vmlinuz-* | sort | tail -1 | sed s/\\/boot//)
-INITRAMFS=$(ls /boot/initramfs-* | sort | tail -1 | sed s/\\/boot//)
-KVERSION=$(echo "$INITRAMFS" | sed s/\\/initramfs-// | sed s/.img//)
-echo "title CentOS 6 ($KVERSION)" >>/boot/grub/menu.lst
+VMLINUZ=\$(ls /boot/vmlinuz-* | sort | tail -1 | sed s/\\/boot//)
+INITRAMFS=\$(ls /boot/initramfs-* | sort | tail -1 | sed s/\\/boot//)
+KVERSION=\$(echo "\$INITRAMFS" | sed s/\\/initramfs-// | sed s/.img//)
+echo "title CentOS 6 (\$KVERSION)" >>/boot/grub/menu.lst
 echo "  root (hd0)" >>/boot/grub/menu.lst
-echo "  kernel $VMLINUZ ro root=/dev/xvda3 rd_NO_LUKS LANG=en_US.UTF-8 rd_NO_MD console=hvc0  KEYTABLE=us SYSFONT=latarcyrheb-sun16 crashkernel=auto rd_NO_LVM rd_NO_DM rhgb quiet" >>/boot/grub/menu.lst
-echo "  initrd $KVERSION" >>/boot/grub/menu.lst
+echo "  kernel \$VMLINUZ ro root=/dev/xvda3 rd_NO_LUKS LANG=en_US.UTF-8 rd_NO_MD console=hvc0  KEYTABLE=us SYSFONT=latarcyrheb-sun16 crashkernel=auto rd_NO_LVM rd_NO_DM rhgb quiet" >>/boot/grub/menu.lst
+echo "  initrd \$KVERSION" >>/boot/grub/menu.lst
 sed -i 's/default=0/default=1/' /boot/grub/menu.lst
 
 
