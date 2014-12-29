@@ -38,7 +38,7 @@ SourceIP=$DUIP
 ServerActive=144.76.106.136
 Hostname=$DUHOSTNAME
 HostMetadata=$ROLES,VirtualHost
-ListenIP=$DUIP
+#ListenIP=$DUIP
 RefreshActiveChecks=120
 StartAgents=0
 EOF
