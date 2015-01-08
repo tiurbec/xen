@@ -155,6 +155,7 @@ rpm -Uvh "http://yum.postgresql.org/9.2/redhat/rhel-6-x86_64/pgdg-centos92-9.2-6
 yum -y install pgbouncer
 /etc/init.d/pgbouncer start
 chkconfig pgbouncer on
+yum -y install postgresql92
 EOF
 fi
 if [[ $HASPOSTGRES -eq 0 && $HASPGBOUNCER -eq 1 ]];
@@ -185,6 +186,7 @@ yum -y --enablerepo=remi install php-fpm php-bcmath php-gd php-mbstring php-mcry
 sed -i -e 's/apache/nginx/g; s/listen.allowed_clients\ =\ 127.0.0.1/listen.allowed_clients\ =\ 127.0.0.1,10.1.1.7/g; s/^;pm.max_requests\ =\ 500/pm.max_requests\ =\ 500/g' /etc/php-fpm.d/www.conf
 /etc/init.d/php-fpm start
 chkconfig php-fpm on
+chown root.nginx /var/lib/php/session
 EOF
 fi
 
