@@ -153,6 +153,8 @@ then
 cat <<EOF >> ./$XKS
 rpm -Uvh "http://yum.postgresql.org/9.2/redhat/rhel-6-x86_64/pgdg-centos92-9.2-6.noarch.rpm"
 yum -y install pgbouncer
+sed -i -e 's/^listen_port/listen_port\ =\ 5432/g' /etc/pgbouncer/pgbouncer.ini
+sed -i -e 's/^listen_addr/listen_addr\ =\ */g' /etc/pgbouncer/pgbouncer.ini
 /etc/init.d/pgbouncer start
 chkconfig pgbouncer on
 yum -y install postgresql92
