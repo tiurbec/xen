@@ -177,6 +177,9 @@ rpm -Uvh http://nginx.org/packages/centos/6/noarch/RPMS/nginx-release-centos-6-0
 yum -y install nginx
 ### momentan
 rm -f /etc/nginx/conf.d/*
+mkdir /srv
+mkdir /srv/http
+chown nginx.nginx /srv/http/
 EOF
 fi
 if [ $HASPHP -eq 1 ]
