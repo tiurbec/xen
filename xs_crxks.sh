@@ -144,6 +144,17 @@ max_wal_senders = 10
 wal_keep_segments = 500
 hot_standby = on
 PGCNF
+cat<<'LOGR' > /etc/logrotate.d/postgresql
+/var/log/postgresql/*log {
+	missingok
+	monthly
+	notifempty
+	sharedscripts
+	postrotate
+        /sbin/service postgresql-9.2 reload > /dev/null 2> /dev/null ||
+true endscript 
+}
+LOGR
 /etc/init.d/postgresql-9.2 start
 chkconfig postgresql-9.2 on
 EOF
