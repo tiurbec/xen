@@ -53,6 +53,16 @@ echo "0"
 return 0
 }
 
+function openShell ()
+{
+IP=${1:-"127.0.0.1"}
+PORT=${2:-"22"}
+USER=${3:-"root"}
+IFILE=${4:-"/root/.ssh/id_rsa"}
+SSHPARAMS=" -p $PORT $USER@$IP -i $IFILE "
+ssh -t -t $SSHPARAMS
+}
+
 function getHostname ()
 {
 IP=$1
