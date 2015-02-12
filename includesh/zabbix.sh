@@ -18,6 +18,7 @@ SSHPARAMS=" -p $PORT $USER@$IP -i $IFILE "
 ZACFGFILE="/etc/zabbix/zabbix_agentd.conf"
 ZAPIDFILE="/var/run/zabbix/zabbix_agentd.pid"
 ZALOGFILE="/var/log/zabbix/zabbix_agentd.log"
+ZAINCLUDE="/etc/zabbix/zabbix_agentd.d/*"
 ROLES="expert"
 if [ $(hasZabbixAgent $IP $PORT $USER $IFILE) -eq 1 ];
 then
@@ -26,6 +27,7 @@ then
     ZACFGFILE="/home/zabbix/conf/zabbix_agentd.conf"
     ZAPIDFILE="/home/zabbix/zabbix_agentd.pid"
     ZALOGFILE="/home/zabbix/zabbix_agentd.log"
+    ZAINCLUDE="/home/zabbix/conf/zabbix_agentd/*"
   fi
   if [ $(hasPostgres $IP $PORT $USER $IFILE) -eq 1 ];
   then
@@ -63,6 +65,7 @@ HostnameItem=system.hostname
 HostMetadata=$ROLES
 RefreshActiveChecks=120
 StartAgents=0
+Include=$ZAINCLUDE
 UserParameter=expert.address,curl -s http://144.76.106.136:800
 UserParameter=expert.sshport,echo \"$PORT\"
 UserParameter=expert.sisname,echo \"$SISNAME\"
