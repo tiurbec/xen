@@ -155,6 +155,8 @@ cat<<'LOGR' > /etc/logrotate.d/postgresql
 true endscript 
 }
 LOGR
+mkdir -p /var/log/postgresql/
+chown postgres.postgres /var/log/postgresql/
 /etc/init.d/postgresql-9.2 start
 chkconfig postgresql-9.2 on
 EOF

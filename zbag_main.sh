@@ -2,6 +2,9 @@
 # zbag_main.sh -	Installs zabbix agent on remote servers
 #			Part of server management @ ExpertSoftware
 #			We are assuming we already made ssh keys exchange
+#			Valid exit codes: 	 0 - no error
+#						 1 - unknown OS
+#						22 - ssh connection error
 #
 #set -x
 if [ $# != 3 ]
@@ -37,7 +40,7 @@ done
 #
 if [ "$IP" == "$MYPUBIP" ];
 then
-   #It seems we are under the same ip
+   #It seems we are under the same public ip
    SAMEIP=1
 fi
 
@@ -190,6 +193,9 @@ EOF
    ssh -p $PORT root@$IP '/etc/init.d/zabbix_agentd stop'
    ssh -p $PORT root@$IP '/etc/init.d/zabbix_agentd start'
 fi
-exit 0
+
+if [ "$OS" == "unknown" ];
+then
+   echo "Could not determine running operating system on remote server."
 #ip=ifconfig|xargs|awk '{print $7}'|sed -e 's/[a-z]*:/''/'
 #cat /etc/redhat-release  | grep "CentOS release 6.6" | wc -l

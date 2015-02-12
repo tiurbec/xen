@@ -2,7 +2,7 @@
 #
 # Network related functions
 #
-. ./config.sh
+. /root/git/xen/includesh/config.sh
 function getDefaultIf ()
 {
 IP=$1

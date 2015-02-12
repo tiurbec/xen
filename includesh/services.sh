@@ -22,7 +22,7 @@ elif [ $# -eq 5 ];
 then
   SSHPARAMS=" -p $PORT $USER@$IP -i $IFILE "
 fi
-RETSTR=$(ssh $SSHPARAMS $SSHOPTS 'ps aux  | grep "$PROCESS" | wc -l' </dev/null)
+RETSTR=$(ssh $SSHPARAMS $SSHOPTS "ps aux  | grep \"$PROCESS\" | wc -l" </dev/null)
 if [ $RETSTR -gt 2 ];
 then
    echo "1"
@@ -194,7 +194,20 @@ elif [ $# -eq 4 ];
 then
   SSHPARAMS=" -p $PORT $USER@$IP -i $IFILE "
 fi
+haspg=0
 if [ $(hasPackage "postgresql" $IP $PORT $USER $IFILE) -eq 1 ];
+then
+   haspg=1
+fi
+if [ $(hasPackage "pg82" $IP $PORT $USER $IFILE) -eq 1 ];
+then
+  haspg=1
+fi
+if [ $(hasPackage "postgresql92" $IP $PORT $USER $IFILE) -eq 1 ];
+then
+  haspg=1
+fi
+if [ $haspg -eq 1 ];
 then
   echo "1"
   return "1"

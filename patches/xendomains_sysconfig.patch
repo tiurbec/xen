@@ -1,5 +1,4 @@
-We want to shutdown domains faster with sysrq
---- /etc/sysconfig/xendomain.origs	2014-09-02 08:22:57.000000000 +0200
+--- /etc/sysconfig/xendomains	2014-09-02 08:22:57.000000000 +0200
 +++ /etc/sysconfig/xendomains	2014-11-26 12:41:22.569000000 +0100
 @@ -8,7 +8,7 @@
  # to do a quick and dirty shutdown ("s e i u o") or at least sync the disks

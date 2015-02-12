@@ -4,6 +4,81 @@
 #
 . ./config.sh
 . ./os.sh
+
+function updateZAconfig ()
+{
+IP=${1:-"127.0.0.1"}
+PORT=${2:-"22"}
+USER=${3:-"root"}
+IFILE=${4:-"/root/.ssh/id_rsa"}
+IDH=${5:-"-1"}
+SISNAME=${6:-"unknown"}
+NEWNAME=${7:-"empty"}
+SSHPARAMS=" -p $PORT $USER@$IP -i $IFILE "
+ZACFGFILE="/etc/zabbix/zabbix_agentd.conf"
+ZAPIDFILE="/var/run/zabbix/zabbix_agentd.pid"
+ZALOGFILE="/var/log/zabbix/zabbix_agentd.log"
+ROLES="expert"
+if [ $(hasZabbixAgent $IP $PORT $USER $IFILE) -eq 1 ];
+then
+  if [ $(isOpensde $IP $PORT $USER $IFILE) -eq 1 ];
+  then
+    ZACFGFILE="/home/zabbix/conf/zabbix_agentd.conf"
+    ZAPIDFILE="/home/zabbix/zabbix_agentd.pid"
+    ZALOGFILE="/home/zabbix/zabbix_agentd.log"
+  fi
+  if [ $(hasPostgres $IP $PORT $USER $IFILE) -eq 1 ];
+  then
+    ROLES="$ROLES,postgres"
+  fi
+  if [ $(hasPhp $IP $PORT $USER $IFILE) -eq 1 ];
+  then
+    ROLES="$ROLES,php"
+  fi
+  if [ $(hasNginx $IP $PORT $USER $IFILE) -eq 1 ];
+  then
+    ROLES="$ROLES,nginx"
+  fi
+  if [ $(isDom0 $IP $PORT $USER $IFILE) -eq 0 ];
+  then
+    ROLES="$ROLES,VirtualHost"
+  else
+    ROLES="$ROLES,Dom0"
+  fi
+  if [ "$NEWNAME" == "empty" ];
+  then
+    ZACFGHNAME=""
+  else
+    ZACFGHNAME="Hostname=$NEWNAME"
+  fi
+  ssh $SSHPARAMS $SSHOPTS "cat <<EOF > $ZACFGFILE
+PidFile=$ZAPIDFILE
+LogFile=$ZALOGFILE
+LogFileSize=0
+DebugLevel=2
+#SourceIP=$SOURCEIP
+$ZACFGHNAME
+ServerActive=144.76.106.136
+HostnameItem=system.hostname
+HostMetadata=$ROLES
+RefreshActiveChecks=120
+StartAgents=0
+UserParameter=expert.address,curl -s http://144.76.106.136:800
+UserParameter=expert.sshport,echo \"$PORT\"
+UserParameter=expert.sisname,echo \"$SISNAME\"
+UserParameter=expert.sisidh,echo \"$IDH\"
+UserParameter=expert.hostname,hostname
+UserParameter=expert.osname,if test -f /etc/redhat-release; then cat /etc/redhat-release; else if test -f /etc/SDE-VERSION; then cat /etc/SDE-VERSION; else echo \"Unknown\";fi ;fi
+UserParameter=expert.consoleusers,who -u |wc -l
+UserParameter=expert.psqlpcount,ps ax|grep postgres|grep -v grep|wc -l
+UserParameter=expert.load1,cat /proc/loadavg | cut -d\  -f1
+UserParameter=expert.load5,cat /proc/loadavg | cut -d\  -f2
+UserParameter=expert.load10,cat /proc/loadavg | cut -d\  -f3
+EOF" </dev/null
+restartZabbixAgent $IP $PORT $USER $IFILE
+fi
+}
+
 function putZabbixAgent ()
 {
 IP=$1
@@ -81,6 +156,18 @@ then
       echo "0"
       return 0
    fi
+elif [ $(isCentos510 $IP $PORT $USER $IFILE) -eq 1 ];
+then
+   RETSTR=$(ssh $SSHPARAMS $SSHOPTS "stat /etc/zabbix/zabbix_agentd.conf 2>/dev/null" </dev/null)
+   RETSTR=$?
+   if [ $RETSTR -eq 0 ];
+   then
+      echo "1"
+      return 1
+   else
+      echo "0"
+      return 0
+   fi
 fi
 echo "0"
 return 0
@@ -139,6 +226,25 @@ then
 fi
 echo "0"
 return 0
+}
+
+function setZAboot ()
+{
+IP=${1:-"127.0.0.1"}
+PORT=${2:-"22"}
+USER=${3:-"root"}
+IFILE=${4:-"/root/.ssh/id_rsa"}
+SSHPARAMS=" -p $PORT $USER@$IP -i $IFILE "
+if [ $(isCentos66 $IP $PORT $USER $IFILE) -eq 1 ];then
+  ssh $SSHPARAMS $SSHOPTS "chkconfig zabbix-agent on" </dev/null
+elif [ $(isCentos65 $IP $PORT $USER $IFILE) -eq 1 ];then
+  ssh $SSHPARAMS $SSHOPTS "chkconfig zabbix-agent on" </dev/null
+elif [ $(isCentos510 $IP $PORT $USER $IFILE) -eq 1 ];then
+  ssh $SSHPARAMS $SSHOPTS "chkconfig zabbix-agent on" </dev/null
+elif [ $(isOpensde $IP $PORT $USER $IFILE) -eq 1 ];then
+  ssh $SSHPARAMS $SSHOPTS "ln -s /etc/init.d/zabbix_agentd /etc/runit/1.d/99zabbix_agentd" </dev/null
+fi
+#ln -s /etc/init.d/zabbix_agentd /etc/runit/1.d/99zabbix_agentd
 }
 
 function putZAcentos66 ()
@@ -230,8 +336,8 @@ then
 # else
 #  ssh $SSHPARAMS '/usr/sbin/useradd -m -s /bin/false zabbix'
 # fi
-else
- ssh $SSHPARAMS $SSHOPTS "/usr/sbin/useradd -m zabbix" </dev/null
+#else
+# ssh $SSHPARAMS $SSHOPTS "/usr/sbin/useradd -m zabbix" </dev/null
 fi
 ssh $SSHPARAMS $SSHOPTS "/usr/sbin/useradd -m zabbix" </dev/null
 ssh $SSHPARAMS $SSHOPTS "chsh -s /bin/false zabbix" </dev/null
@@ -306,6 +412,7 @@ EOF
 #
 #exit 0
 #EOF
+ssh $SSHPARAMS $SSHOPTS 'touch /etc/init.d/zabbix_agentd' </dev/null
 ssh $SSHPARAMS $SSHOPTS 'cat <<'"'"'EOF'"'"' >/etc/init.d/zabbix_agentd
 title() {
         local x w="$( stty size 2>/dev/null </dev/tty | cut -d" " -f2  )"

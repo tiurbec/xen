@@ -58,6 +58,23 @@ echo "0"
 return 0
 }
 
+function isCentos510 ()
+{
+IP=${1:-"127.0.0.1"}
+PORT=${2:-"22"}
+USER=${3:-"root"}
+IFILE=${4:-"/root/.ssh/id_rsa"}
+SSHPARAMS=" -p $PORT $USER@$IP -i $IFILE "
+RETSTR=$(ssh $SSHPARAMS $SSHOPTS 'cat /etc/redhat-release 2>/dev/null | grep "CentOS release 5.10" | wc -l' </dev/null)
+if [ $RETSTR -eq 1 ];
+then
+   echo "1"
+   return 1
+fi
+echo "0"
+return 0
+}
+
 function isOpensde ()
 {
 IP=$1
