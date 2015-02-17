@@ -5,21 +5,11 @@
 . /root/git/xen/includesh/config.sh
 function getDefaultIf ()
 {
-IP=$1
-PORT=$2
-USER=$3
-IFILE=$4
-SSHPARAMS=""
-if [ $# -eq 2 ];
-then
-  SSHPARAMS=" -p $PORT root@$IP "
-elif [ $# -eq 3 ];
-then
-  SSHPARAMS=" -p $PORT $USER@$IP "
-elif [ $# -eq 4 ];
-then
-  SSHPARAMS=" -p $PORT $USER@$IP -i $IFILE "
-fi
+IP=${1:-"127.0.0.1"}
+PORT=${2:-"22"}
+USER=${3:-"root"}
+IFILE=${4:-"/root/.ssh/id_rsa"}
+SSHPARAMS=" -p $PORT $USER@$IP -i $IFILE "
 RETSTR=$(ssh $SSHPARAMS $SSHOPTS "route -n | grep -e \"^0.0.0.0\" | awk 'END {print \$NF}'" </dev/null)
 echo -n "$RETSTR"
 }
@@ -65,42 +55,22 @@ ssh -t -t $SSHPARAMS
 
 function getHostname ()
 {
-IP=$1
-PORT=$2
-USER=$3
-IFILE=$4
-SSHPARAMS=""
-if [ $# -eq 2 ];
-then
-  SSHPARAMS=" -p $PORT root@$IP "
-elif [ $# -eq 3 ];
-then
-  SSHPARAMS=" -p $PORT $USER@$IP "
-elif [ $# -eq 4 ];
-then
-  SSHPARAMS=" -p $PORT $USER@$IP -i $IFILE "
-fi
+IP=${1:-"127.0.0.1"}
+PORT=${2:-"22"}
+USER=${3:-"root"}
+IFILE=${4:-"/root/.ssh/id_rsa"}
+SSHPARAMS=" -p $PORT $USER@$IP -i $IFILE "
 RETSTR=$(ssh $SSHPARAMS $SSHOPTS "hostname" </dev/null)
 echo -n "$RETSTR"
 }
 
 function getDefaultGw ()
 {
-IP=$1
-PORT=$2
-USER=$3
-IFILE=$4
-SSHPARAMS=""
-if [ $# -eq 2 ];
-then
-  SSHPARAMS=" -p $PORT root@$IP "
-elif [ $# -eq 3 ];
-then
-  SSHPARAMS=" -p $PORT $USER@$IP "
-elif [ $# -eq 4 ];
-then
-  SSHPARAMS=" -p $PORT $USER@$IP -i $IFILE "
-fi
+IP=${1:-"127.0.0.1"}
+PORT=${2:-"22"}
+USER=${3:-"root"}
+IFILE=${4:-"/root/.ssh/id_rsa"}
+SSHPARAMS=" -p $PORT $USER@$IP -i $IFILE "
 RETSTR=$(ssh $SSHPARAMS $SSHOPTS "route -n | grep -e \"^0.0.0.0\" | awk '{print \$2}'" </dev/null)
 echo -n "$RETSTR"
 }
