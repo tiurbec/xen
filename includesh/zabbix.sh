@@ -84,11 +84,11 @@ fi
 
 function putZabbixAgent ()
 {
-IP=$1
-PORT=$2
-USER=$3
-IFILE=$4
-SSHPARAMS=""
+IP=${1:-"127.0.0.1"}
+PORT=${2:-"22"}
+USER=${3:-"root"}
+IFILE=${4:-"/root/.ssh/id_rsa"}
+SSHPARAMS=" -p $PORT $USER@$IP -i $IFILE "
 if [ $(hasZabbixAgent $IP $PORT $USER $IFILE) -eq 0 ];
 then
   if [ $(isCentos66 $IP $PORT $USER $IFILE) -eq 1 ];
@@ -108,21 +108,11 @@ fi
 
 function hasZabbixAgent ()
 {
-IP=$1
-PORT=$2
-USER=$3
-IFILE=$4
-SSHPARAMS=""
-if [ $# -eq 2 ];
-then
-  SSHPARAMS=" -p $PORT root@$IP "
-elif [ $# -eq 3 ];
-then
-  SSHPARAMS=" -p $PORT $USER@$IP "
-elif [ $# -eq 4 ];
-then
-  SSHPARAMS=" -p $PORT $USER@$IP -i $IFILE "
-fi
+IP=${1:-"127.0.0.1"}
+PORT=${2:-"22"}
+USER=${3:-"root"}
+IFILE=${4:-"/root/.ssh/id_rsa"}
+SSHPARAMS=" -p $PORT $USER@$IP -i $IFILE "
 if [ $(isCentos66 $IP $PORT $USER $IFILE) -eq 1 ];
 then
    RETSTR=$(ssh $SSHPARAMS $SSHOPTS "stat /etc/zabbix/zabbix_agentd.conf 2>/dev/null" </dev/null)
@@ -178,21 +168,11 @@ return 0
 
 function isZabbixAgentRunning ()
 {
-IP=$1
-PORT=$2
-USER=$3
-IFILE=$4
-SSHPARAMS=""
-if [ $# -eq 2 ];
-then
-  SSHPARAMS=" -p $PORT root@$IP "
-elif [ $# -eq 3 ];
-then
-  SSHPARAMS=" -p $PORT $USER@$IP "
-elif [ $# -eq 4 ];
-then
-  SSHPARAMS=" -p $PORT $USER@$IP -i $IFILE "
-fi
+IP=${1:-"127.0.0.1"}
+PORT=${2:-"22"}
+USER=${3:-"root"}
+IFILE=${4:-"/root/.ssh/id_rsa"}
+SSHPARAMS=" -p $PORT $USER@$IP -i $IFILE "
 RETSTR=$(ssh $SSHPARAMS $SSHOPTS 'ps aux  | grep "zabbix_agentd" | wc -l' </dev/null)
 if [ $RETSTR -gt 0 ];
 then
@@ -205,21 +185,11 @@ return 0
 
 function restartZabbixAgent ()
 {
-IP=$1
-PORT=$2
-USER=$3
-IFILE=$4
-SSHPARAMS=""
-if [ $# -eq 2 ];
-then
-  SSHPARAMS=" -p $PORT root@$IP "
-elif [ $# -eq 3 ];
-then
-  SSHPARAMS=" -p $PORT $USER@$IP "
-elif [ $# -eq 4 ];
-then
-  SSHPARAMS=" -p $PORT $USER@$IP -i $IFILE "
-fi
+IP=${1:-"127.0.0.1"}
+PORT=${2:-"22"}
+USER=${3:-"root"}
+IFILE=${4:-"/root/.ssh/id_rsa"}
+SSHPARAMS=" -p $PORT $USER@$IP -i $IFILE "
 RETSTR=$(ssh $SSHPARAMS $SSHOPTS '/etc/init.d/zabbix_agentd stop >/dev/null 2>/dev/null' </dev/null)
 RETSTR=$(ssh $SSHPARAMS $SSHOPTS '/etc/init.d/zabbix_agentd start >/dev/null 2>/dev/null' </dev/null)
 if [ $? -eq 0 ];
@@ -252,25 +222,13 @@ fi
 
 function putZAcentos66 ()
 {
-IP=$1
-PORT=$2
-USER=$3
-IFILE=$4
-SSHPARAMS=""
-SCPPARAMS=""
+IP=${1:-"127.0.0.1"}
+PORT=${2:-"22"}
+USER=${3:-"root"}
+IFILE=${4:-"/root/.ssh/id_rsa"}
+SSHPARAMS=" -p $PORT $USER@$IP -i $IFILE "
+SCPPARAMS=${4:+" -i $IFILE "}
 ROLES="base"
-if [ $# -eq 2 ];
-then
-  SSHPARAMS=" -p $PORT root@$IP "
-  USER="root"
-elif [ $# -eq 3 ];
-then
-  SSHPARAMS=" -p $PORT $USER@$IP "
-elif [ $# -eq 4 ];
-then
-  SSHPARAMS=" -p $PORT $USER@$IP -i $IFILE "
-  SCPPARAMS=" -i $IFILE "
-fi
 SOURCEIP=$(ssh $SSHPARAMS $SSHOPTS "ifconfig eth0|grep inet|grep -v inet6|awk '{print \$2}'|sed 's/addr://'" </dev/null)
 errecho $SOURCEIP
 ssh $SSHPARAMS $SSHOPTS 'rpm -Uvh "http://repo.zabbix.com/zabbix/2.4/rhel/6/x86_64/zabbix-release-2.4-1.el6.noarch.rpm"' </dev/null
@@ -308,26 +266,14 @@ ssh $SSHPARAMS $SSHOPTS "service zabbix-agent restart" </dev/null
 
 function putZAopensde ()
 {
-IP=$1
-PORT=$2
-USER=$3
-IFILE=$4
-SSHPARAMS=""
-SCPPARAMS=""
+IP=${1:-"127.0.0.1"}
+PORT=${2:-"22"}
+USER=${3:-"root"}
+IFILE=${4:-"/root/.ssh/id_rsa"}
+SSHPARAMS=" -p $PORT $USER@$IP -i $IFILE "
+SCPPARAMS=${4:+" -i $IFILE "}
 ROLES="base"
 DEFIF="dummy0"
-if [ $# -eq 2 ];
-then
-  SSHPARAMS=" -p $PORT root@$IP "
-  USER="root"
-elif [ $# -eq 3 ];
-then
-  SSHPARAMS=" -p $PORT $USER@$IP "
-elif [ $# -eq 4 ];
-then
-  SSHPARAMS=" -p $PORT $USER@$IP -i $IFILE "
-  SCPPARAMS=" -i $IFILE "
-fi
 DEFIF=$(getDefaultIf $IP $PORT $USER $IFILE)
 SOURCEIP=$(ssh $SSHPARAMS $SSHOPTS "ifconfig $DEFIF|grep inet|grep -v inet6|awk '{print \$2}'|sed 's/addr://'" </dev/null)
 if [ $(isOpensdeTrunk $IP $PORT $USER $IFILE) -eq 1 ];
