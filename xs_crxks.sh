@@ -106,7 +106,7 @@ then
 cat <<EOF >> ./$XKS
 rpm -Uvh "http://yum.postgresql.org/9.2/redhat/rhel-6-x86_64/pgdg-centos92-9.2-6.noarch.rpm"
 yum -y groupinstall "PostgreSQL Database Server 9.2 PGDG"
-su - postgres  "/usr/pgsql-9.2/bin/initdb --encoding=UTF8 --lc-collate=C --lc-ctype=C -D /var/lib/pgsql/9.2/data/"
+su -l postgres -c "/usr/pgsql-9.2/bin/initdb --encoding=UTF8 --lc-collate=C --lc-ctype=C -D /var/lib/pgsql/9.2/data/"
 #/etc/init.d/postgresql-9.2 initdb
 echo "local   all             all                                     trust" > /var/lib/pgsql/9.2/data/pg_hba.conf
 echo "host    all             all             127.0.0.1/32            trust" >>/var/lib/pgsql/9.2/data/pg_hba.conf
@@ -176,13 +176,17 @@ EOF
 fi
 if [[ $HASPOSTGRES -eq 0 && $HASPGBOUNCER -eq 1 ]];
 then
+cat <<EOF >> ./$XKS
 adduser postgres
 chsh -s /sbin/nologin postgres
+EOF
 fi
 if [[ $HASNGINX -eq 1 && $HASPOSTGRES -eq 0 ]];
 then
+cat <<EOF >> ./$XKS
 rpm -Uvh "http://yum.postgresql.org/9.2/redhat/rhel-6-x86_64/pgdg-centos92-9.2-6.noarch.rpm"
 yum -y install postgresql92
+EOF
 fi
 if [ $HASNGINX -eq 1 ]
 then
