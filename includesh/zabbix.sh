@@ -473,6 +473,7 @@ EOF
 #EOF
 ssh $SSHPARAMS $SSHOPTS 'touch /etc/init.d/zabbix_agentd' </dev/null
 ssh $SSHPARAMS $SSHOPTS 'cat <<'"'"'EOF'"'"' >/etc/init.d/zabbix_agentd
+export PATH=$PATH:/opt/postgresql/bin
 title() {
         local x w="$( stty size 2>/dev/null </dev/tty | cut -d" " -f2  )"
         [ -z "$w" ] && w="$( stty size </dev/console | cut -d" " -f2  )"
