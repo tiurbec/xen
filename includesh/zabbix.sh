@@ -524,6 +524,8 @@ ssh $SSHPARAMS $SSHOPTS "chmod +x /etc/init.d/zabbix_agentd" </dev/null
 scp -P $PORT $SCPPARAMS /root/git/xen/files/zabbix-agent/postgres/etc/* $USER@$IP:/home/zabbix/conf/zabbix_agentd/
 scp -P $PORT $SCPPARAMS /root/git/xen/files/zabbix-agent/postgres/usr/* $USER@$IP:/usr/local/bin/
 
+ssh $SSHPARAMS $SSHOPTS "ln -s /etc/init.d/zabbix_agentd /etc/runit/1.d/99zabbix_agentd" </dev/null
+
 ssh $SSHPARAMS $SSHOPTS "/etc/init.d/zabbix_agentd stop" </dev/null
 ssh $SSHPARAMS $SSHOPTS "/etc/init.d/zabbix_agentd start" </dev/null
 
