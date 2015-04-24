@@ -4,6 +4,7 @@
 SSHOPTS=' -q -T -o PasswordAuthentication=no -o StrictHostKeyChecking=no -o BatchMode=yes -o ConnectTimeout=4 '
 SSHPOST=' </dev/null 2>/dev/null'
 HOSTLIST='/root/hosts.spc'
+HOSTLISTOVR='/root/hosts.override'
 ZAFILES='/root/git/xen/files/'
 
 
