@@ -1,12 +1,13 @@
 # Let's prepare Dom0 for xen on Centos 6.6
-if [ $# -ne 2 ];
+if [ $# -ne 3 ];
 then
-  echo "Use: $0 <hostname> <ip>"
+  echo "Use: $0 <hostname> <ip> <port>"
   exit 0
 fi
 HOSTNAME=$1
 IP=$2
-SSHPARAMS=" -p 22 root@$IP "
+SSHPORT=$3
+SSHPARAMS=" -p $SSHPORT root@$IP "
 
 echo "Preparing $HOSTNAME[$IP] to be Dom0 ..."
 
@@ -75,7 +76,7 @@ ssh $SSHPARAMS "sed -i -e s/#UseDNS\ yes/UseDNS\ no/ /etc/ssh/sshd_config"
 ssh $SSHPARAMS "sed -i -e s/#Port\ 22/Port\ 2200/ /etc/ssh/sshd_config"
 echo "Restarting SSH on new port 2200 ..."
 ssh $SSHPARAMS "service sshd restart"
-SSHPARAMS=" -p 2200 root@$IP "
+SSHPARAMS=" -p 3200 root@$IP "
 echo "Restarting iptables ..."
 ssh $SSHPARAMS "service iptables restart;chkconfig iptables on"
 echo "Installing nginx ..."

@@ -36,7 +36,7 @@ ssh -p $HOSTSSHP root@$HOSTIP "stat /usr/local/xen/vmlinuz"
 XRUNEXISTS=$?
 if [ $XRUNEXISTS -ne 0 ]
 then
-   scp -P $HOSTSSHP ./files/vmlinuz root@$HOSTIP:/usr/local/xen/vmlinuz
+   scp -P $HOSTSSHP ./files/Dom0/vmlinuz root@$HOSTIP:/usr/local/xen/vmlinuz
 fi
 
 #Checking /usr/local/xen/initrd.img on Dom0
@@ -44,7 +44,7 @@ ssh -p $HOSTSSHP root@$HOSTIP "stat /usr/local/xen/initrd.img"
 XRUNEXISTS=$?
 if [ $XRUNEXISTS -ne 0 ]
 then
-   scp -P $HOSTSSHP ./files/initrd.img root@$HOSTIP:/usr/local/xen/initrd.img
+   scp -P $HOSTSSHP ./files/Dom0/initrd.img root@$HOSTIP:/usr/local/xen/initrd.img
 fi
 
 cp -f ./$XKS /var/www/html/
