@@ -360,8 +360,8 @@ UserParameter=expert.osname,if test -f /etc/redhat-release; then cat /etc/redhat
 
 EOF" </dev/null
 
-scp -P $PORT $SCPPARAMS /root/git/xen/files/zabbix-agent/postgres/etc/* $USER@$IP:/etc/zabbix/zabbix_agentd.d/
-scp -P $PORT $SCPPARAMS /root/git/xen/files/zabbix-agent/postgres/usr/* $USER@$IP:/usr/local/bin/
+scp -P $PORT $SCPPARAMS /root/git/xen/files/etc/* $USER@$IP:/etc/zabbix/zabbix_agentd.d/
+scp -P $PORT $SCPPARAMS /root/git/xen/files/usr/* $USER@$IP:/usr/local/bin/
 ssh $SSHPARAMS $SSHOPTS "service zabbix-agent restart" </dev/null
 }
 
