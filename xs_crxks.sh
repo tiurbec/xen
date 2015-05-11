@@ -209,6 +209,8 @@ rpm -Uvh http://dl.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm
 rpm -Uvh http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
 yum -y --enablerepo=remi install php-fpm php-bcmath php-gd php-mbstring php-mcrypt php-pgsql php-php-gettext php-soap php-xml
 sed -i -e 's/apache/nginx/g; s/listen.allowed_clients\ =\ 127.0.0.1/listen.allowed_clients\ =\ 127.0.0.1,10.1.1.7/g; s/^;pm.max_requests\ =\ 500/pm.max_requests\ =\ 500/g' /etc/php-fpm.d/www.conf
+sed -i -e 's/post_max_size\ =\ 8M/post_max_size\ =\ 20M/g' /etc/php.ini
+sed -i -e 's/upload_max_filesize\ =\ 2M/upload_max_filesize\ =\ 20M/g' /etc/php.ini
 /etc/init.d/php-fpm start
 chkconfig php-fpm on
 chown root.nginx /var/lib/php/session
