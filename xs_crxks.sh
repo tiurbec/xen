@@ -101,6 +101,69 @@ chkconfig zabbix-agent on
 service  zabbix-agent restart
 EOF
 
+
+
+if [ $HASX5 -eq 1 ]
+then
+cat <<EOF >> ./$XKS
+rpm -Uvh "http://yum.postgresql.org/9.2/redhat/rhel-6-x86_64/pgdg-centos92-9.2-6.noarch.rpm"
+yum -y groupinstall "PostgreSQL Database Server 9.2 PGDG"
+su -l postgres -c "/usr/pgsql-9.2/bin/initdb --encoding=UTF8 --lc-collate=C --lc-ctype=C -D /var/lib/pgsql/9.2/data/"
+#/etc/init.d/postgresql-9.2 initdb
+echo "local   all             all                                     trust" > /var/lib/pgsql/9.2/data/pg_hba.conf
+echo "host    all             all             127.0.0.1/32            trust" >>/var/lib/pgsql/9.2/data/pg_hba.conf
+echo "host    all             all             10.1.1.0/24             trust" >>/var/lib/pgsql/9.2/data/pg_hba.conf
+cat <<'PGCNF' > /var/lib/pgsql/9.2/data/postgresql.conf
+listen_addresses = '*'
+port = 5432
+max_connections = 100
+shared_buffers = 48MB
+enable_nestloop = off
+fsync=on
+checkpoint_segments = 50
+log_destination = 'stderr'
+logging_collector = on	
+log_directory = 'pg_log'
+log_filename = 'postgresql-%a.log'
+log_truncate_on_rotation = on	
+log_rotation_age = 1d	
+log_rotation_size = 0
+log_timezone = 'Europe/Bucharest'
+datestyle = 'iso, dmy'
+timezone = 'Europe/Bucharest'
+lc_messages = 'en_US.UTF-8'	
+lc_monetary = 'en_US.UTF-8'
+lc_numeric = 'en_US.UTF-8'
+lc_time = 'en_US.UTF-8'	
+default_text_search_config = 'pg_catalog.english'
+
+wal_level = 'hot_standby'
+archive_mode = on
+archive_command = 'cd .'
+
+max_wal_senders = 10
+wal_keep_segments = 500
+hot_standby = on
+PGCNF
+cat<<'LOGR' > /etc/logrotate.d/postgresql
+/var/log/postgresql/*log {
+	missingok
+	monthly
+	notifempty
+	sharedscripts
+	postrotate
+        /sbin/service postgresql-9.2 reload > /dev/null 2> /dev/null ||
+true endscript 
+}
+LOGR
+mkdir -p /var/log/postgresql/
+chown postgres.postgres /var/log/postgresql/
+/etc/init.d/postgresql-9.2 start
+chkconfig postgresql-9.2 on
+EOF
+fi
+
+
 if [ $HASPOSTGRES -eq 1 ]
 then
 cat <<EOF >> ./$XKS

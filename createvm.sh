@@ -11,7 +11,7 @@
 # DUHOSTNAME	- hostname pentru DomU 
 # DUMAC		- adresa MAC generata din IDHOST
 # ROLES		- lista de servicii oferite. serviciile sunt separate cu virgula si fara spatii. 
-#		  servicii posibile: postgres,pgbouncer,nginx,php
+#		  servicii posibile: postgres,pgbouncer,nginx,php,x5
 #
 # DEBUG		- for debugging messages
 # TESTING	- will only create config files but wil not apply anything
