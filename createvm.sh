@@ -77,7 +77,8 @@ HASNGINX=0
 HASPOSTGRES=0
 HASPHP=0
 HASPGBOUNCER=0
-APPS="nginx pgbouncer postgres php"
+HASX5=0
+APPS="nginx pgbouncer postgres php x5"
 
 for app in $APPS; do
         if [[ "$ROLES" == *"$app"* ]]; then
