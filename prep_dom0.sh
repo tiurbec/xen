@@ -14,7 +14,6 @@ echo "Preparing $HOSTNAME[$IP] to be Dom0 ..."
 echo "Installing /root/.ssh/authorized_keys"
 cat <<'EOF' | ssh $SSHPARAMS 'cat >> /root/.ssh/authorized_keys'
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDRbxZmL0wIzP6YhzTtL7Gq8XTtn5YlLtsYpVKUHTT2EskGTMVmdF4ja+/qt6rqILf/6w3/HQ2RyYUFv+6QKfk1rI44nLwJ/GVWXe5PD1uzD7LffUESraCrkwaVUCWWy6QMznnHx7BO8AS3il3BYeLq7f82oJLxumILUSks95UdC67wgv8ZUCsWV1gnv00HIJ3hB1fHrwqiTM4KxISwATII0kSQysXFtvdoXbvodneomzs/Si3RW3VduvjcPdBzltJcRlNp/MKlprzqtbOt5fAp/5lzeNwWZZIWiciG+YxC/bOvplJ+/Nf7SKj1vMCLOo9nIjtrNMqScAC8DF70RTG9 tiurbec@sis.easy-cloud.net
-ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgwCXyVETsLPU4gNVTyuDv2KzoEGNbDETSU1PK170sPskgQJs4q17Kdh82qiKSOZynSGBE+QRKjtL0+CBU42WYperHFSDGK7CEq60mw+gjZu39eUFmteoLQ3xkahKnyrUuQa77JsBDZqTsMw9sUy62OigkGew82RnkaBDQ73rJRuGJJfv karasz@divto
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC5yMJUtJw/vWXu/wvi5W/mQaLPuxPxm5lQbxM5wggO/Ww8xWHfiw9kqB7YBxFrip1NKuLgpKT7Z7L08ak9FlWeYOMQP6UsTnqw5jewRQ8s3Kw/1YT+HjjWHw+QYWBXUgY5whwSrqRwtOHmjk1fbH6U1udDodnCLiwhKwGc6882wNQMzyGGfPKzs55Jb1lcN408zMHlAW9wb7QJhFKzw3iSsuuNjzYi5Gbp5ZYHYGmH8FJOPaJnllgJRkZdyyTh0ZX4JSZUimmKIVb9hC/IlN0qk0YqhSxwJ0MXFkpVxJUKr0a4KZQC2J7xpqGtD3P5SX2MkK0WfFbWiEPA/mWRQiZf monitor@sis.easy-cloud.net
 ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAwot7GHBhswQexXk3kHCRS9igSkqKAb4MhNH2dMYz5CtQumaq9Qd0qyOeCXWrZ60+DmNfd5JTTsDwayRmgPe1evrZVEkzKuTBQkhkZDhuOpvpF3sEH4VQTX2qc/Ud0D0mC9ymPXAQbHj0uoWOJiF6VEyfrDl/6pF0fEUyCbzST5MnNOOScJ/eZByPNzerIK1K76S0CEcYxPV9N0NhOe7vyvC41d9RmwpUs64spHTcNROkRrypGS4s/RMTQpcqB5syBwEdCk3Iv21ha5Clv3YVG0rleqHSJ5TBqkspTiS2m61srWwSLwU8pqbIFfHablhwswmpyy2q8W5zvelT6ZpwEQ== root@tiurbec
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDPHyE25FBeL5PiFyC9sJzvPMYpK8vnibP9rcNX4GZ1qeMsGHt6QNEub2leJhiz+jcjDidoLO/tDZfSy7m95Kft3hPEis9Hjv9hntKbuS9eyDP33vRSM8LNOFW7CATsiUBMY9o7LNvEXaFR4ec/imBg5zsc8fDyL5QwvEwrQaWa2g5h/tN3FWzsgURlUkxmLN5rLu4wcRyRsxk21SgygXAxDRJRe0usHvV0uhKy34NBmmoNd+u0Px8Vlex6Eqi+B/pokHGZg/aYoKe2pSz+Ep0UcC6XoE112jjrpbbrvLwOhH1VgcAOukg9KX1u5PM7VM4/tgCXKu9XJONdPNccEWHV system@expert-accounting.com
@@ -76,13 +75,18 @@ ssh $SSHPARAMS "sed -i -e s/#UseDNS\ yes/UseDNS\ no/ /etc/ssh/sshd_config"
 ssh $SSHPARAMS "sed -i -e s/#Port\ 22/Port\ 2200/ /etc/ssh/sshd_config"
 echo "Restarting SSH on new port 2200 ..."
 ssh $SSHPARAMS "service sshd restart"
-SSHPARAMS=" -p 3200 root@$IP "
+SSHPARAMS=" -p 2200 root@$IP "
 echo "Restarting iptables ..."
 ssh $SSHPARAMS "service iptables restart;chkconfig iptables on"
 echo "Installing nginx ..."
 ssh $SSHPARAMS "rpm -Uvh http://nginx.org/packages/centos/6/noarch/RPMS/nginx-release-centos-6-0.el6.ngx.noarch.rpm"
 ssh $SSHPARAMS "yum -y install nginx"
 ssh $SSHPARAMS "chkconfig nginx on"
+echo "Add the following to nginx.conf:"
+echo "    gzip  on;"
+echo "    client_max_body_size 500M;"
+echo "    client_body_buffer_size 4096k;"
+echo "    ssl_protocols TLSv1 TLSv1.1 TLSv1.2;"
 echo "Activating xendomains ..."
 ssh $SSHPARAMS "chkconfig xendomains on"
 echo "Done."
