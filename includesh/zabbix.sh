@@ -181,6 +181,9 @@ then
   if [ $(isCentos66 $IP $PORT $USER $IFILE) -eq 1 ];
   then
     putZAcentos66 $IP $PORT $USER $IFILE
+  elif [ $(isCentos67 $IP $PORT $USER $IFILE) -eq 1 ];
+  then
+    putZAcentos66 $IP $PORT $USER $IFILE
   elif [ $(isCentos65 $IP $PORT $USER $IFILE) -eq 1 ];
   then
     putZAcentos66 $IP $PORT $USER $IFILE
@@ -343,14 +346,17 @@ PidFile=/var/run/zabbix/zabbix_agentd.pid
 LogFile=/var/log/zabbix/zabbix_agentd.log
 LogFileSize=0
 DebugLevel=2
-SourceIP=$SOURCEIP
-ServerActive=144.76.106.136
+#SourceIP=$SOURCEIP
+ServerActive=moni.easy-cloud.net
+#ServerActive=zbxprx_my.easy-cloud.net
+#ServerActive=zbxprx_ro.easy-cloud.net:10052
+#ServerActive=zbxprx_hz.easy-cloud.net:10053
 HostnameItem=system.hostname
 HostMetadata=$ROLES
 RefreshActiveChecks=120
 StartAgents=0
 Include=/etc/zabbix/zabbix_agentd.d/*
-UserParameter=expert.address,curl -s http://10.1.1.10
+UserParameter=expert.address,curl -s http://moni.easy-cloud.net:800
 UserParameter=expert.sshport,echo \"$PORT\"
 UserParameter=expert.one,echo \"1\"
 UserParameter=expert.sisname,echo \"\"
