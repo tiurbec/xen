@@ -257,7 +257,7 @@ then
 cat <<EOF >> ./$XKS
 rpm -Uvh http://nginx.org/packages/centos/6/noarch/RPMS/nginx-release-centos-6-0.el6.ngx.noarch.rpm
 yum -y install nginx
-sed -i -e 's/\ \ \ keepalive_timeout\ \ 65;/\ \ \ keepalive_timeout\ \ 65;\\n\ \ \ \ client_max_body_size\ 500M;\\n\ \ \ \ client_body_buffer_size\ 4096k;/g' /etc/nginx/nginx.conf
+sed -i -e 's/\ \ \ keepalive_timeout\ \ 65;/\ \ \ keepalive_timeout\ \ 300;\\n\ \ \ proxy_read_timeout\ 300;\\n\ \ \ send_timeout\ 300;\\n\ \ \ fastcgi_read_timeout\ 300;\\n\ \ \ fastcgi_send_timeout\ 300;\\n\ \ \ \ client_max_body_size\ 500M;\\n\ \ \ \ client_body_buffer_size\ 4096k;/g' /etc/nginx/nginx.conf
 sed -i -e 's/#gzip\ \ on;/gzip\ \ on;/g' /etc/nginx/nginx.conf
 ### momentan
 rm -f /etc/nginx/conf.d/*
