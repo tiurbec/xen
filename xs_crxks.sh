@@ -264,6 +264,8 @@ rm -f /etc/nginx/conf.d/*
 mkdir /srv
 mkdir /srv/http
 chown nginx.nginx /srv/http/
+mkdir /home/nobody
+chown nginx.nginx /home/nobody/
 EOF
 fi
 if [ $HASPHP -eq 1 ]
